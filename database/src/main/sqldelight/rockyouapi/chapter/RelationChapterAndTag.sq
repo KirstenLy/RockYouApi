@@ -1,0 +1,60 @@
+-- CREATE TABLE RelationChapterAndTag (
+--   id INTEGER NOT NULL PRIMARY KEY,
+--   chapterID INT UNSIGNED NOT NULL,
+--   tagID SMALLINT UNSIGNED NOT NULL
+--
+-- --   FOREIGN KEY (chapterID) REFERENCES ContentRegister(id)
+-- --        ON DELETE CASCADE
+-- --        ON UPDATE CASCADE,
+-- --
+-- --    FOREIGN KEY (tagID) REFERENCES Tag(id)
+-- --         ON DELETE CASCADE
+-- --         ON UPDATE CASCADE
+-- );
+
+
+
+selectAll:
+SELECT
+    *
+FROM
+    RelationChapterAndTag;
+
+
+
+selectTagsForChapters:
+SELECT
+    RelationChapterAndTag.chapterID AS chapterID,
+    Tag.id AS tagID,
+    TagTranslation.envID AS tagLangID,
+    TagTranslation.translation AS tagTranslation
+FROM
+    RelationChapterAndTag
+INNER JOIN
+    Tag
+    ON
+    RelationChapterAndTag.tagID = Tag.id
+-- INNER JOIN
+--     RelationTagAndTranslation
+--     ON
+--     RelationTagAndTranslation.tagID = Tag.id
+-- INNER JOIN
+--     TagTranslation
+--     ON
+--     TagTranslation.id = RelationTagAndTranslation.translationID
+INNER JOIN
+    TagTranslation
+    ON
+    TagTranslation.tagID = RelationChapterAndTag.tagID
+WHERE
+    RelationChapterAndTag.chapterID IN :chapterID;
+
+
+
+selectLastInsertedID:
+SELECT
+    RelationChapterAndTag.id
+FROM
+    RelationChapterAndTag
+WHERE
+    RelationChapterAndTag.id = last_insert_rowid();

@@ -1,0 +1,5 @@
+insert:
+INSERT INTO
+    Tag(id)
+VALUES
+    (:id);

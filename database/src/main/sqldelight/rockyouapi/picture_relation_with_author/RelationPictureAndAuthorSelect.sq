@@ -1,0 +1,15 @@
+selectAll:
+SELECT
+    *
+FROM
+    RelationPictureAndAuthor;
+
+
+
+selectLastInsertedID:
+SELECT
+    RelationPictureAndAuthor.id
+FROM
+    RelationPictureAndAuthor
+WHERE
+    RelationPictureAndAuthor.id = last_insert_rowid();

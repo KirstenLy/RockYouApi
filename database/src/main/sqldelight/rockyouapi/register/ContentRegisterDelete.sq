@@ -1,0 +1,5 @@
+deleteContentRegister:
+DELETE FROM
+    ContentRegister
+WHERE
+    ContentRegister.id = :contentRegisterID;

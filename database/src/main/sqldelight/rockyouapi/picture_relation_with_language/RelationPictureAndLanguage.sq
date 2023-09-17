@@ -1,0 +1,12 @@
+-- CREATE TABLE RelationPictureAndLanguage (
+--   id INTEGER NOT NULL PRIMARY KEY,
+--   pictureID INT UNSIGNED NOT NULL,
+--   langID TINYINT UNSIGNED NOT NULL
+-- -- FOREIGN KEY (pictureID) REFERENCES ContentRegister(id)
+-- --      ON DELETE CASCADE
+-- --      ON UPDATE CASCADE,
+-- --
+-- -- FOREIGN KEY (langID) REFERENCES Language(id)
+-- --       ON DELETE CASCADE
+-- --       ON UPDATE CASCADE
+-- );

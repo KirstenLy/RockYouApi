@@ -1,0 +1,32 @@
+insert:
+INSERT INTO
+    User(id, name)
+VALUES
+    (:id, :name);
+
+
+
+selectAllByName:
+SELECT
+    *
+FROM
+    User;
+
+
+
+
+updateUserID:
+UPDATE
+    User
+SET
+    id = :newID
+WHERE
+    User.id = :oldID;
+
+
+
+removeUserByID:
+DELETE FROM
+    User
+WHERE
+    User.id = :userID;

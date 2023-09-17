@@ -1,0 +1,32 @@
+-- Delete this table
+-- CREATE TABLE StoryNode (
+--   id INT NOT NULL PRIMARY KEY,
+--   storyID INT UNSIGNED NOT NULL,
+--   scheme TEXT NOT NULL
+-- );
+
+
+
+-- selectAll:
+-- SELECT
+--     StoryNode.scheme
+-- FROM
+--     StoryNode;
+--
+--
+--
+-- selectAllForStory:
+-- SELECT
+--     *
+-- FROM
+--     StoryNode
+-- WHERE
+--     StoryNode.storyID = :storyID;
+--
+--
+--
+-- insert:
+-- INSERT INTO
+--     StoryNode(id, storyID, scheme)
+-- VALUES
+--     (:id,:storyID, :scheme);

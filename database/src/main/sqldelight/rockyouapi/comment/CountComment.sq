@@ -1,0 +1,9 @@
+countForContentAndUser:
+SELECT
+    COUNT(id)
+FROM
+    Comment
+WHERE
+    Comment.contentID = :contentID
+    AND
+    Comment.userID = :userID;

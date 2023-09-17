@@ -1,0 +1,15 @@
+selectAll:
+SELECT
+    *
+FROM
+    RelationPictureAndLanguage;
+
+
+
+selectLastInsertedID:
+SELECT
+    RelationPictureAndLanguage.id
+FROM
+    RelationPictureAndLanguage
+WHERE
+    RelationPictureAndLanguage.id = last_insert_rowid();

@@ -1,0 +1,22 @@
+selectForContent:
+SELECT
+    Comment.id AS id,
+    Comment.contentID AS contentID,
+    Comment.text AS text,
+    User.id AS userID,
+    User.name AS userName
+FROM
+    Comment
+INNER JOIN
+    User
+    ON
+    User.id = Comment.userID
+WHERE
+    Comment.contentID = :contentID
+ORDER BY
+    Comment.id
+    DESC
+LIMIT
+    :limit
+OFFSET
+    :offset;

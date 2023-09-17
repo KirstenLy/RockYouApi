@@ -1,0 +1,13 @@
+selectAll:
+SELECT
+    *
+FROM
+    TagTranslation;
+
+
+
+insert:
+INSERT INTO
+    TagTranslation(id, tagID, envID, translation)
+VALUES
+    (:id, :tagID, :langID, :translation);

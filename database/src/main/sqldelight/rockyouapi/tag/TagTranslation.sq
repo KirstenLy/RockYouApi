@@ -1,0 +1,24 @@
+-- CREATE TABLE TagTranslation (
+--   id INTEGER NOT NULL PRIMARY KEY,
+--   tagID SMALLINT NOT NULL,
+--   langID TINYINT UNSIGNED NOT NULL,
+--   translation VARCHAR(255) NOT NULL
+--
+-- --   FOREIGN KEY (tagID) REFERENCES Tag(id)
+-- --       ON DELETE CASCADE
+-- --       ON UPDATE CASCADE,
+-- --
+-- --   FOREIGN KEY (langID) REFERENCES Language(id)
+-- --        ON DELETE CASCADE
+-- --        ON UPDATE CASCADE
+-- );
+
+
+
+selectLastInsertedID:
+SELECT
+    TagTranslation.id
+FROM
+    TagTranslation
+WHERE
+    TagTranslation.id = last_insert_rowid();

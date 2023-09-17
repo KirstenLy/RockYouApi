@@ -1,0 +1,5 @@
+insert:
+INSERT INTO
+    Language(id, isDefault)
+VALUES
+    (:id, :isDefault);

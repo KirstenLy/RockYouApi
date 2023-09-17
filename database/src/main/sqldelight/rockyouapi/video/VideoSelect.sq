@@ -1,0 +1,162 @@
+selectVideoBaseInfo:
+SELECT
+    ContentRegister.id AS registerID,
+    Video.title AS title,
+    Video.url AS url,
+    User.id AS userID,
+    User.name AS userName,
+    Video.languageID AS baseLanguageID,
+    Video.rating AS rating,
+    (SELECT COUNT(*) FROM Comment WHERE Comment.contentID = ContentRegister.id) AS commentsCount
+FROM
+    ContentRegister
+JOIN
+    Video ON ContentRegister.id = Video.id
+JOIN
+    User ON User.id = Video.userID
+WHERE
+    ContentRegister.id = :videoID;
+
+
+
+selectLastBaseInfoListWithLangID:
+SELECT
+    ContentRegister.id AS registerID,
+    Video.title AS title,
+    Video.url AS url,
+    User.id AS userID,
+    User.name AS userName,
+    Video.languageID AS baseLanguageID,
+    Video.rating AS rating,
+    (SELECT COUNT(*) FROM Comment WHERE Comment.contentID = ContentRegister.id) AS commentsCount
+FROM
+    ContentRegister
+JOIN
+    Video ON ContentRegister.id = Video.id
+JOIN
+    User ON User.id = Video.userID
+WHERE
+    ContentRegister.contentType = 2
+    AND
+    Video.languageID = :langID
+ORDER BY
+    ContentRegister.id DESC
+LIMIT
+    :limit
+OFFSET
+    :offset;
+
+
+
+selectLastBaseInfoList:
+SELECT
+    ContentRegister.id AS registerID,
+    Video.title AS title,
+    Video.url AS url,
+    User.id AS userID,
+    User.name AS userName,
+    Video.languageID AS baseLanguageID,
+    Video.rating AS rating,
+    (SELECT COUNT(*) FROM Comment WHERE Comment.contentID = ContentRegister.id) AS commentsCount
+FROM
+    ContentRegister
+JOIN
+    Video ON ContentRegister.id = Video.id
+JOIN
+    User ON User.id = Video.userID
+WHERE
+    ContentRegister.contentType = 2
+ORDER BY
+    ContentRegister.id DESC
+LIMIT
+    :limit
+OFFSET
+    :offset;
+
+
+
+selectVideoAuthors:
+SELECT
+    Author.id AS authorID,
+    Author.name AS authorName
+FROM
+    RelationVideoAndAuthor
+JOIN
+    Author
+    ON
+    RelationVideoAndAuthor.authorID = Author.id
+WHERE
+    RelationVideoAndAuthor.videoID = :videoID;
+
+
+
+selectVideosAuthorList:
+SELECT
+    RelationVideoAndAuthor.videoID AS videoID,
+    Author.id AS authorID,
+    Author.name AS authorName
+FROM
+    RelationVideoAndAuthor
+JOIN
+    Author
+    ON
+    RelationVideoAndAuthor.authorID = Author.id
+WHERE
+    RelationVideoAndAuthor.videoID IN :videoIDList
+ORDER BY
+    Author.id DESC;
+
+
+
+selectVideoAvailableLangIDList:
+SELECT
+    RelationVideoAndLanguage.langID AS abailableLanguageID
+FROM
+    RelationVideoAndLanguage
+WHERE
+    RelationVideoAndLanguage.videoID = :videoID;
+
+
+
+selectVideosAvailableLanguageList:
+SELECT
+    RelationVideoAndLanguage.videoID AS videoID,
+    RelationVideoAndLanguage.langID AS abailableLanguageID
+FROM
+    RelationVideoAndLanguage
+WHERE
+    RelationVideoAndLanguage.videoID IN :videoIDList;
+
+
+
+selectVideoTags:
+SELECT
+    RelationVideoAndTag.tagID AS tagID,
+    TagTranslation.translation AS tagTranslation
+FROM
+    RelationVideoAndTag
+JOIN
+    TagTranslation
+ON
+    TagTranslation.tagID = RelationVideoAndTag.tagID
+WHERE
+    RelationVideoAndTag.videoID = :videoID AND TagTranslation.envID = :environmentLangID
+ORDER BY
+    RelationVideoAndTag.tagID ASC;
+
+
+
+selectVideosTagList:
+SELECT
+    RelationVideoAndTag.videoID AS videoID,
+    RelationVideoAndTag.tagID AS tagID,
+    TagTranslation.envID AS tagLangID,
+    TagTranslation.translation AS tagTranslation
+FROM
+    RelationVideoAndTag
+JOIN
+    TagTranslation
+ON
+    TagTranslation.tagID = RelationVideoAndTag.tagID
+WHERE
+    RelationVideoAndTag.videoID IN :videoIDList AND TagTranslation.envID = :environmentLangID;

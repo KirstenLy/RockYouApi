@@ -1,0 +1,9 @@
+-- CREATE TABLE LanguageTranslation (
+--   id SMALLINT NOT NULL PRIMARY KEY,
+--   langID TINYINT UNSIGNED NOT NULL,
+--   translation VARCHAR(255) NOT NULL,
+--
+--   FOREIGN KEY (langID) REFERENCES Language(id)
+--        ON DELETE CASCADE
+--        ON UPDATE CASCADE
+-- );

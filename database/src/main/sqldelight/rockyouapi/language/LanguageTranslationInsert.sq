@@ -1,0 +1,5 @@
+insert:
+INSERT INTO
+    LanguageTranslation(id, langID, envID, translation)
+VALUES
+    (:id, :langID, :envID, :translation);

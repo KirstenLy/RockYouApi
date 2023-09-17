@@ -1,0 +1,5 @@
+insert:
+INSERT INTO
+    RelationChapterAndTag(id, chapterID, tagID)
+VALUES
+    (:id, :chapterID, :tagID);

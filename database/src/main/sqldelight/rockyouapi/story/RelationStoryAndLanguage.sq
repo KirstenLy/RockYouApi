@@ -1,0 +1,53 @@
+-- CREATE TABLE RelationStoryAndLanguage (
+--   id INTEGER NOT NULL PRIMARY KEY,
+--   storyID INT UNSIGNED NOT NULL,
+--   langID TINYINT UNSIGNED NOT NULL
+--
+-- --   FOREIGN KEY (storyID) REFERENCES ContentRegister(id)
+-- --        ON DELETE CASCADE
+-- --        ON UPDATE CASCADE,
+-- --
+-- --   FOREIGN KEY (langID) REFERENCES Language(id)
+-- --         ON DELETE CASCADE
+-- --         ON UPDATE CASCADE
+-- );
+
+
+
+selectAll:
+SELECT
+    *
+FROM
+    RelationStoryAndLanguage;
+
+
+
+-- Read available languages IDs for one story
+selectStoryAvailableLanguage:
+SELECT
+    RelationStoryAndLanguage.langID AS storyLangID
+FROM
+    RelationStoryAndLanguage
+WHERE
+    RelationStoryAndLanguage.storyID = :storyID;
+
+
+
+selectStoriesAvailableLanguages:
+SELECT
+    RelationStoryAndLanguage.storyID AS storyID,
+    RelationStoryAndLanguage.langID AS storyLangID
+FROM
+    RelationStoryAndLanguage
+WHERE
+    RelationStoryAndLanguage.storyID IN :storiesIDs;
+
+
+
+selectLastInsertedID:
+SELECT
+    RelationStoryAndLanguage.id
+FROM
+    RelationStoryAndLanguage
+WHERE
+    RelationStoryAndLanguage.id = last_insert_rowid();

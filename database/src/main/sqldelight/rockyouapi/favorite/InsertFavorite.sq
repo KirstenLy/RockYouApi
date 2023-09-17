@@ -1,0 +1,5 @@
+insert:
+INSERT INTO
+    Favorite(id, userID, contentID)
+VALUES
+    (:id, :userID, :contentID);

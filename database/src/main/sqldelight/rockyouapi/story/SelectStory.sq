@@ -1,0 +1,70 @@
+selectStoryBaseInfo:
+SELECT
+    ContentRegister.id AS id,
+    Story.title AS title,
+    Story.languageID AS languageID,
+    User.id AS userID,
+    User.name AS userName,
+    Story.rating AS rating,
+    Story.scheme AS scheme,
+    (SELECT COUNT(*) FROM Comment WHERE Comment.contentID = ContentRegister.id) AS commentsCount
+FROM
+    ContentRegister
+INNER JOIN
+    Story
+    ON
+    ContentRegister.id = Story.id
+INNER JOIN
+    User
+    ON
+    Story.userID = User.id
+WHERE
+    ContentRegister.id = :registerID;
+
+
+
+selectStoryAuthors:
+SELECT
+    Author.id AS authorID,
+    Author.name AS authorName
+FROM
+    RelationStoryAndAuthor
+JOIN
+    Author
+    ON
+    RelationStoryAndAuthor.authorID = Author.id
+WHERE
+    RelationStoryAndAuthor.storyID = :storyID
+ORDER BY
+    RelationStoryAndAuthor.authorID
+    ASC;
+
+
+
+selectStoryAvailableLangIDs:
+SELECT
+    RelationStoryAndLanguage.langID AS abailableLanguageID
+FROM
+    RelationStoryAndLanguage
+WHERE
+    RelationStoryAndLanguage.storyID = :storyID
+ORDER BY
+    RelationStoryAndLanguage.langID
+    ASC;
+
+
+
+selectStoryTags:
+SELECT
+    RelationStoryAndTag.tagID AS tagID,
+    TagTranslation.translation AS tagTranslation
+FROM
+    RelationStoryAndTag
+JOIN
+    TagTranslation
+ON
+    TagTranslation.tagID = RelationStoryAndTag.tagID
+WHERE
+    RelationStoryAndTag.storyID = :storyID AND TagTranslation.envID = :environmentLangID
+ORDER BY
+    RelationStoryAndTag.tagID ASC;

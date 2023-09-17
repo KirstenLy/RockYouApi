@@ -1,0 +1,22 @@
+-- CREATE TABLE Author (
+--   id MEDIUMINT NOT NULL PRIMARY KEY,
+--   name VARCHAR(255) NOT NULL
+-- );
+
+
+
+selectAll:
+SELECT
+    *
+FROM
+    Author;
+
+
+
+selectByIDs:
+SELECT
+    *
+FROM
+    Author
+WHERE
+    Author.id IN :ids;

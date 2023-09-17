@@ -1,0 +1,13 @@
+-- CREATE TABLE RelationPictureAndTag (
+--   id INTEGER NOT NULL PRIMARY KEY,
+--   pictureID INT UNSIGNED NOT NULL,
+--   tagID SMALLINT UNSIGNED NOT NULL
+--
+-- --   FOREIGN KEY (pictureID) REFERENCES ContentRegister(id)
+-- --        ON DELETE CASCADE
+-- --        ON UPDATE CASCADE,
+-- --
+-- --   FOREIGN KEY (tagID) REFERENCES Tag(id)
+-- --         ON DELETE CASCADE
+-- --         ON UPDATE CASCADE
+-- );

@@ -1,0 +1,5 @@
+selectAll:
+SELECT
+    *
+FROM
+    Tag;

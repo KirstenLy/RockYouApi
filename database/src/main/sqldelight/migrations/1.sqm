@@ -1,0 +1,447 @@
+-----------
+CREATE TABLE IF NOT EXISTS DBVersion (
+    version SMALLINT
+);
+
+INSERT INTO DBVersion(version) VALUES (2);
+-----------
+
+
+-----------
+CREATE TABLE IF NOT EXISTS Language (
+    id INTEGER NOT NULL PRIMARY KEY,
+    isDefault BOOLEAN NOT NULL
+);
+
+
+CREATE TABLE IF NOT EXISTS LanguageTranslation (
+    id INTEGER NOT NULL PRIMARY KEY,
+    langID INTEGER NOT NULL,
+    envID INTEGER NOT NULL,
+    translation VARCHAR(255) NOT NULL,
+
+    FOREIGN KEY (langID) REFERENCES Language(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+
+    FOREIGN KEY (envID) REFERENCES Language(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
+-----------
+
+
+
+-----------
+CREATE TABLE Tag (
+    id SMALLINT NOT NULL PRIMARY KEY
+);
+
+
+CREATE TABLE TagTranslation (
+    id INTEGER NOT NULL PRIMARY KEY,
+    tagID SMALLINT NOT NULL,
+    envID INTEGER NOT NULL,
+    translation VARCHAR(255) NOT NULL,
+
+    FOREIGN KEY (tagID) REFERENCES Tag(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+
+    FOREIGN KEY (envID) REFERENCES Language(id)
+         ON DELETE CASCADE
+         ON UPDATE CASCADE
+);
+-----------
+
+
+
+-----------
+CREATE TABLE IF NOT EXISTS ContentRegister (
+    id INTEGER NOT NULL PRIMARY KEY,
+    contentType TINYINT UNSIGNED NOT NULL,
+    contentID INT UNSIGNED NOT NULL
+);
+-----------
+
+
+
+-----------
+CREATE TABLE IF NOT EXISTS Author (
+    id MEDIUMINT NOT NULL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL
+);
+-----------
+
+
+
+-----------
+CREATE TABLE IF NOT EXISTS User (
+    id INTEGER PRIMARY KEY NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    registerDate DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+
+CREATE TABLE IF NOT EXISTS UserAuthData (
+    id INTEGER NOT NULL PRIMARY KEY,
+    userID INTEGER NOT NULL,
+    password VARCHAR(255) NOT NULL,
+
+    FOREIGN KEY (userID) REFERENCES User(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
+-----------
+
+
+
+-----------
+CREATE TABLE Comment (
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    contentID INTEGER NOT NULL,
+    userID INTEGER NOT NULL,
+    text TEXT NOT NULL,
+    creationDate DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (contentID) REFERENCES ContentRegister(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+
+    FOREIGN KEY (userID) REFERENCES User(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
+-----------
+
+
+
+-----------
+CREATE TABLE IF NOT EXISTS Favorite (
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    userID INTEGER NOT NULL,
+    contentID INTEGER NOT NULL,
+
+    FOREIGN KEY (userID) REFERENCES User(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+
+    FOREIGN KEY (contentID) REFERENCES ContentRegister(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
+
+
+CREATE UNIQUE INDEX FavoriteContentIndex ON Favorite(userID, contentID);
+-----------
+
+
+
+-----------
+CREATE TABLE Report (
+    id INT UNSIGNED NOT NULL PRIMARY KEY,
+    contentID INTEGER NOT NULL,
+    userID INTEGER,
+    reportText TEXT NOT NULL,
+    isClosed BOOLEAN NOT NULL DEFAULT FALSE,
+    creationDate DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (contentID) REFERENCES ContentRegister(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+
+    FOREIGN KEY (userID) REFERENCES User(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
+-----------
+
+
+
+-----------
+CREATE TABLE VoteHistory (
+    id INT UNSIGNED NOT NULL PRIMARY KEY,
+    contentID INTEGER NOT NULL,
+    userID INTEGER NOT NULL,
+    vote TINYINT NOT NULL,
+
+    FOREIGN KEY (contentID) REFERENCES ContentRegister(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+
+    FOREIGN KEY (userID) REFERENCES User(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
+-----------
+
+
+
+-----------
+CREATE TABLE Picture (
+    id INTEGER NOT NULL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    url TEXT NOT NULL,
+    languageID INTEGER,
+    userID INTEGER,
+    rating MEDIUMINT NOT NULL DEFAULT 0,
+    creationDate DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (id) REFERENCES ContentRegister(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+
+    FOREIGN KEY (languageID) REFERENCES Language(id),
+
+    FOREIGN KEY (userID) REFERENCES User(id)
+);
+
+
+CREATE TABLE RelationPictureAndAuthor (
+    id INTEGER PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    pictureID INTEGER NOT NULL,
+    authorID MEDIUMINT NOT NULL,
+
+    FOREIGN KEY (pictureID) REFERENCES ContentRegister(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+
+    FOREIGN KEY (authorID) REFERENCES Author(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
+
+
+CREATE TABLE RelationPictureAndLanguage (
+    id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    pictureID INTEGER NOT NULL,
+    langID INTEGER NOT NULL,
+
+    FOREIGN KEY (pictureID) REFERENCES ContentRegister(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+
+    FOREIGN KEY (langID) REFERENCES Language(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
+
+CREATE TABLE RelationPictureAndTag(
+    id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    pictureID INTEGER NOT NULL,
+    tagID SMALLINT NOT NULL,
+
+    FOREIGN KEY (pictureID) REFERENCES ContentRegister(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+
+    FOREIGN KEY (tagID) REFERENCES Tag(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
+-----------
+
+
+
+-----------
+CREATE TABLE Video (
+    id INTEGER NOT NULL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    url TEXT NOT NULL,
+    languageID INTEGER,
+    userID INTEGER NOT NULL,
+    rating MEDIUMINT NOT NULL DEFAULT 0,
+    creationDate DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (id) REFERENCES ContentRegister(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+
+    FOREIGN KEY (languageID) REFERENCES Language(id),
+
+    FOREIGN KEY (userID) REFERENCES User(id)
+);
+
+
+CREATE TABLE RelationVideoAndAuthor(
+    id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    videoID INTEGER NOT NULL,
+    authorID MEDIUMINT NOT NULL,
+
+    FOREIGN KEY (videoID) REFERENCES ContentRegister(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+
+    FOREIGN KEY (authorID) REFERENCES Author(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
+
+
+CREATE TABLE RelationVideoAndLanguage (
+    id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    videoID INTEGER NOT NULL,
+    langID INTEGER NOT NULL,
+
+    FOREIGN KEY (videoID) REFERENCES ContentRegister(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+
+    FOREIGN KEY (langID) REFERENCES Language(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
+
+
+CREATE TABLE RelationVideoAndTag (
+    id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    videoID INTEGER NOT NULL,
+    tagID SMALLINT NOT NULL,
+
+    FOREIGN KEY (videoID) REFERENCES ContentRegister(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+
+    FOREIGN KEY (tagID) REFERENCES Tag(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
+-----------
+
+
+-----------
+CREATE TABLE IF NOT EXISTS Story (
+    id INTEGER NOT NULL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    languageID INTEGER NOT NULL,
+    userID INTEGER NOT NULL,
+    rating MEDIUMINT NOT NULL DEFAULT 0,
+    scheme TEXT NOT NULL,
+    creationDate DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (id) REFERENCES ContentRegister(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+
+    FOREIGN KEY (languageID) REFERENCES Language(id),
+
+    FOREIGN KEY (userID) REFERENCES User(id)
+);
+
+
+CREATE TABLE RelationStoryAndAuthor (
+    id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    storyID INTEGER NOT NULL,
+    authorID MEDIUMINT NOT NULL,
+
+    FOREIGN KEY (storyID) REFERENCES ContentRegister(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+
+    FOREIGN KEY (authorID) REFERENCES Author(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
+
+
+CREATE TABLE RelationStoryAndLanguage (
+    id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    storyID INTEGER NOT NULL,
+    langID INTEGER NOT NULL,
+
+    FOREIGN KEY (storyID) REFERENCES ContentRegister(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+
+    FOREIGN KEY (langID) REFERENCES Language(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
+
+
+CREATE TABLE RelationStoryAndTag (
+    id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    storyID INTEGER NOT NULL,
+    tagID SMALLINT NOT NULL,
+
+    FOREIGN KEY (storyID) REFERENCES ContentRegister(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+
+    FOREIGN KEY (tagID) REFERENCES Tag(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
+-----------
+
+
+
+-----------
+CREATE TABLE IF NOT EXISTS Chapter (
+    id INTEGER NOT NULL PRIMARY KEY,
+    storyID INTEGER NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    languageID INTEGER NOT NULL,
+    userID INTEGER NOT NULL,
+    rating MEDIUMINT NOT NULL DEFAULT 0,
+    text MEDIUMTEXT NOT NULL,
+    creationDate DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (id) REFERENCES ContentRegister(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+
+    FOREIGN KEY (storyID) REFERENCES Story(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+
+    FOREIGN KEY (languageID) REFERENCES Language(id),
+
+    FOREIGN KEY (userID) REFERENCES User(id)
+);
+
+
+CREATE TABLE IF NOT EXISTS RelationChapterAndAuthor (
+    id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    chapterID INTEGER NOT NULL,
+    authorID MEDIUMINT NOT NULL,
+
+    FOREIGN KEY (chapterID) REFERENCES ContentRegister(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+
+    FOREIGN KEY (authorID) REFERENCES Author(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
+
+
+CREATE TABLE RelationChapterAndLanguage (
+    id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    chapterID INTEGER NOT NULL,
+    langID INTEGER NOT NULL,
+
+    FOREIGN KEY (chapterID) REFERENCES ContentRegister(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+
+    FOREIGN KEY (langID) REFERENCES Language(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
+
+
+CREATE TABLE RelationChapterAndTag (
+    id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    chapterID INTEGER NOT NULL,
+    tagID SMALLINT NOT NULL,
+
+    FOREIGN KEY (chapterID) REFERENCES ContentRegister(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+
+    FOREIGN KEY (tagID) REFERENCES Tag(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
+-----------

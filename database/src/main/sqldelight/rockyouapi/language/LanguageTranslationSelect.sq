@@ -1,0 +1,15 @@
+selectAll:
+SELECT
+    *
+FROM
+    LanguageTranslation;
+
+
+
+selectLastInsertedID:
+SELECT
+    LanguageTranslation.id
+FROM
+    LanguageTranslation
+WHERE
+    LanguageTranslation.id = last_insert_rowid();

@@ -1,0 +1,73 @@
+-- CREATE TABLE Video (
+--   id INTEGER NOT NULL PRIMARY KEY,
+--   title VARCHAR(255) NOT NULL,
+--   url TEXT NOT NULL,
+--   languageID TINYINT UNSIGNED,
+--   userID MEDIUMINT UNSIGNED NOT NULL,
+--   rating MEDIUMINT NOT NULL DEFAULT 0,
+--   creationDate DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+--
+-- --   FOREIGN KEY (id) REFERENCES ContentRegister(id)
+-- --       ON DELETE CASCADE
+-- --       ON UPDATE CASCADE,
+-- --
+-- --   FOREIGN KEY (languageID) REFERENCES Language(id),
+-- --
+-- --   FOREIGN KEY (userID) REFERENCES User(id)
+-- );
+
+
+
+selectAll:
+SELECT
+    *
+FROM
+    Video;
+
+
+
+selectAllByID:
+SELECT
+    *
+FROM
+    Video
+WHERE
+    Video.id = ?;
+
+
+
+selectRatingByID:
+SELECT
+    Video.rating
+FROM
+    Video
+WHERE
+    Video.id = ?;
+
+
+
+countCommentsForVideo:
+SELECT
+    COUNT(*)
+FROM
+    Comment
+WHERE
+    Comment.contentID = ?;
+
+
+
+insert:
+INSERT INTO
+    Video(id, title, url, languageID, userID, rating)
+VALUES
+    (:id, :title, :url, :languageID, :userID, :rating);
+
+
+
+updateRating:
+UPDATE
+    Video
+SET
+    rating = :rating
+WHERE
+    Video.id = :id;

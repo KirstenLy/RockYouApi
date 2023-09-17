@@ -1,0 +1,13 @@
+-- CREATE TABLE RelationPictureAndAuthor (
+--   id INTEGER NOT NULL PRIMARY KEY,
+--   pictureID INT UNSIGNED NOT NULL,
+--   authorID MEDIUMINT UNSIGNED NOT NULL
+--
+-- --   FOREIGN KEY (pictureID) REFERENCES ContentRegister(id)
+-- --         ON DELETE CASCADE
+-- --         ON UPDATE CASCADE,
+-- --
+-- --   FOREIGN KEY (authorID) REFERENCES Author(id)
+-- --         ON DELETE CASCADE
+-- --         ON UPDATE CASCADE
+-- );

@@ -1,0 +1,46 @@
+insert:
+INSERT INTO
+    User(id, name)
+VALUES
+    (:id, :name);
+
+
+
+selectAllByName:
+SELECT
+    *
+FROM
+    User
+WHERE
+    User.name = :name;
+
+
+
+-- Read user by his ID
+selectByID:
+SELECT
+    *
+FROM
+    User
+WHERE
+    User.id = :userID;
+
+
+
+selectByIDs:
+SELECT
+    *
+FROM
+    User
+WHERE
+    User.id IN :ids;
+
+
+
+selectLastInsertedUserID:
+SELECT
+    User.id
+FROM
+    User
+WHERE
+    User.id = last_insert_rowid();

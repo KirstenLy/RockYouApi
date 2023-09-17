@@ -1,0 +1,21 @@
+selectRegisterByID:
+SELECT
+    *
+FROM
+    ContentRegister
+WHERE
+    ContentRegister.id = :contentID
+LIMIT
+    1;
+
+
+
+checkIfRecordExist:
+SELECT
+    1
+FROM
+    ContentRegister
+WHERE
+    ContentRegister.id = :contentID
+LIMIT
+    1;

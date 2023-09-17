@@ -1,0 +1,7 @@
+checkIfAnyRecordsExist:
+SELECT
+    1
+FROM
+    RelationPictureAndAuthor
+WHERE
+    RelationPictureAndAuthor.id = :contentID;

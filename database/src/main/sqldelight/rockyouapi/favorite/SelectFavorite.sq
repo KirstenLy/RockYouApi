@@ -1,0 +1,31 @@
+selectAll:
+SELECT
+    *
+FROM
+    Favorite;
+
+
+
+selectOneByUserIDAndContentID:
+SELECT
+    *
+FROM
+    Favorite
+WHERE
+    Favorite.userID = :userID
+    AND
+    Favorite.contentID = :contentID
+LIMIT
+    1;
+
+
+
+selectAllByUserIDAndContentID:
+SELECT
+    *
+FROM
+    Favorite
+WHERE
+    Favorite.userID = :userID
+    AND
+    Favorite.contentID = :contentID;

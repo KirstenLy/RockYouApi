@@ -1,0 +1,40 @@
+-- CREATE TABLE VoteHistory (
+--   id INT UNSIGNED NOT NULL PRIMARY KEY,
+--   userID MEDIUMINT UNSIGNED NOT NULL,
+--   contentID INT UNSIGNED NOT NULL,
+--   vote TINYINT NOT NULL
+-- );
+
+
+
+selectAll:
+SELECT
+    *
+FROM
+    VoteHistory;
+
+
+
+selectAllByUserIDAndContentID:
+SELECT
+    *
+FROM
+    VoteHistory
+WHERE
+    VoteHistory.userID = :userID AND VoteHistory.contentID = :contentID;
+
+
+
+insertForProd:
+INSERT INTO
+    VoteHistory(id, userID, contentID, vote)
+VALUES
+    (NULL, :userID, :contentID, :vote);
+
+
+
+removeByUserIDAndContentID:
+DELETE FROM
+    VoteHistory
+WHERE
+    VoteHistory.userID = :userID AND VoteHistory.contentID = :contentID;

@@ -1,0 +1,6 @@
+insert:
+INSERT INTO
+    RelationStoryAndLanguage(id, storyID, langID)
+VALUES
+    (:id, :storyID, :langID);
+

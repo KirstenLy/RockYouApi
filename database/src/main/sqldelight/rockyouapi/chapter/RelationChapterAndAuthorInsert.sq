@@ -1,0 +1,5 @@
+insert:
+INSERT INTO
+    RelationChapterAndAuthor(id, chapterID, authorID)
+VALUES
+    (:id, :chapterID, :authorID);

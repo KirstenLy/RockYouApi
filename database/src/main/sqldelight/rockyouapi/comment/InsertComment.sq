@@ -1,0 +1,5 @@
+insert:
+INSERT INTO
+    Comment(id, contentID, userID, text)
+VALUES
+    (:id, :contentID, :userID, :text);

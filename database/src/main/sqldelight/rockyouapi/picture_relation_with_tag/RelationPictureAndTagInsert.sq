@@ -1,0 +1,5 @@
+insert:
+INSERT INTO
+    RelationPictureAndTag(id, pictureID, tagID)
+VALUES
+    (:id, :pictureID, :tagID);

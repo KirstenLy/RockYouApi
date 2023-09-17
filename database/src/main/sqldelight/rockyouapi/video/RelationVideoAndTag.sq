@@ -1,0 +1,55 @@
+-- CREATE TABLE RelationVideoAndTag (
+--   id INTEGER NOT NULL PRIMARY KEY,
+--   videoID INT UNSIGNED NOT NULL,
+--   tagID SMALLINT UNSIGNED NOT NULL
+--
+-- --
+-- --   FOREIGN KEY (videoID) REFERENCES ContentRegister(id)
+-- --        ON DELETE CASCADE
+-- --        ON UPDATE CASCADE,
+-- --
+-- --   FOREIGN KEY (tagID) REFERENCES Tag(id)
+-- --         ON DELETE CASCADE
+-- --         ON UPDATE CASCADE
+-- );
+
+
+
+selectAll:
+SELECT
+    *
+FROM
+    RelationVideoAndTag;
+
+
+
+selectTagsForVideo:
+SELECT
+    Tag.id,
+    TagTranslation.envID,
+    TagTranslation.translation
+FROM
+    RelationVideoAndTag
+INNER JOIN
+    Tag
+    ON
+    RelationVideoAndTag.tagID = Tag.id
+-- INNER JOIN
+--     RelationTagAndTranslation
+--     ON
+--     RelationTagAndTranslation.tagID = Tag.id
+-- INNER JOIN
+--     TagTranslation
+--     ON
+--     TagTranslation.id = RelationTagAndTranslation.translationID
+INNER JOIN
+    TagTranslation
+    ON
+    TagTranslation.tagID = RelationVideoAndTag.tagID
+WHERE
+    RelationVideoAndTag.videoID = ?;
+
+
+
+selectLastInsertedID:
+SELECT RelationVideoAndTag.id FROM RelationVideoAndTag WHERE id = last_insert_rowid();

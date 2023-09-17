@@ -1,0 +1,5 @@
+removeByUserIDAndContentID:
+DELETE FROM
+    Favorite
+WHERE
+    Favorite.userID = :userID AND Favorite.contentID = :contentID;

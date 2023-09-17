@@ -1,0 +1,144 @@
+-- CREATE TABLE ContentRegister (
+--   id INTEGER NOT NULL PRIMARY KEY,
+--   contentType TINYINT UNSIGNED NOT NULL,
+--   contentID INT UNSIGNED NOT NULL
+-- );
+
+
+
+
+
+
+
+insert:
+INSERT INTO
+    ContentRegister(id, contentType, contentID)
+VALUES
+    (:id,:contentType, :contentID);
+
+
+
+selectAllChaptersExceptTextByIDs:
+SELECT
+    ContentRegister.id AS registerID,
+    Chapter.id AS entityID,
+    Chapter.title AS chapterTitle,
+    Chapter.userID AS chapterUserID,
+    Chapter.languageID AS chapterLangID,
+    Chapter.rating AS chapterRating
+FROM
+    ContentRegister
+INNER JOIN
+    Chapter
+    ON
+    Chapter.id = ContentRegister.contentID
+WHERE
+    ContentRegister.id IN :registerIDs;
+
+
+
+selectContentIDAndContentTypeByID:
+SELECT
+    ContentRegister.contentID AS contentID,
+    ContentRegister.contentType AS contentType
+FROM
+    ContentRegister
+WHERE
+    ContentRegister.id = ?;
+
+
+
+selectLastNByContentType:
+SELECT
+    ContentRegister.id AS registerID,
+    ContentRegister.contentID AS entityID
+FROM
+    ContentRegister
+WHERE
+    ContentRegister.contentType = :contentType
+ORDER BY
+    ContentRegister.id DESC
+LIMIT
+    :limit
+OFFSET
+    :offset;
+
+
+
+selectLastNRegisterIDsByContentType:
+SELECT
+    ContentRegister.id AS registerID
+FROM
+    ContentRegister
+WHERE
+    ContentRegister.contentType = :contentType
+ORDER BY
+    ContentRegister.id DESC
+LIMIT
+    :limit
+OFFSET
+    :offset;
+
+
+
+selectLastNStoriesByContentType:
+SELECT
+    ContentRegister.id AS registerID,
+    ContentRegister.contentID AS entityID,
+    Story.title AS storyTitle,
+    Story.userID AS storyUserID,
+    Story.languageID AS storyLanguageID,
+    Story.rating AS storyRating
+FROM
+    ContentRegister
+INNER JOIN
+    Story
+    ON
+    Story.id = ContentRegister.contentID
+WHERE
+    ContentRegister.contentType = :contentType
+ORDER BY
+    ContentRegister.id DESC
+LIMIT
+    :limit
+OFFSET
+    :offset;
+
+
+
+selectRegisterIDsByNameAndContentType:
+SELECT
+    ContentRegister.id AS registerID
+FROM
+    ContentRegister
+INNER JOIN
+    Picture
+    ON
+    Picture.id = ContentRegister.contentID
+WHERE
+    ContentRegister.contentType = :contentType
+AND
+    Picture.title
+LIKE
+    :searchWord
+ORDER BY
+    ContentRegister.id DESC;
+
+
+
+replaceRegisterID:
+UPDATE
+    ContentRegister
+SET
+    id = :newRegisterID
+WHERE
+    ContentRegister.id = :oldRegisterID;
+
+
+
+
+removeContentByID:
+DELETE FROM
+    ContentRegister
+WHERE
+    ContentRegister.id = :registerID;

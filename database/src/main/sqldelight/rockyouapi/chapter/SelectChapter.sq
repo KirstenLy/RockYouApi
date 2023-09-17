@@ -1,0 +1,69 @@
+selectBaseInfoList:
+SELECT
+    ContentRegister.id AS id,
+    Chapter.storyID AS parentStoryID,
+    Chapter.title AS title,
+    Chapter.languageID AS baseLanguageID,
+    Chapter.rating AS rating,
+    Chapter.text AS text,
+    User.id AS userID,
+    User.name AS userName,
+    (SELECT COUNT(*) FROM Comment WHERE Comment.contentID = ContentRegister.id) AS commentsCount
+FROM
+    ContentRegister
+JOIN
+    Chapter
+    ON
+    ContentRegister.id = Chapter.id
+JOIN
+    User
+    ON
+    User.id = Chapter.userID
+WHERE
+    ContentRegister.id IN :chapterIDList;
+
+
+
+selectChaptersAuthorList:
+SELECT
+    RelationChapterAndAuthor.chapterID AS chapterID,
+    Author.id AS authorID,
+    Author.name AS authorName
+FROM
+    RelationChapterAndAuthor
+JOIN
+    Author
+    ON
+    RelationChapterAndAuthor.authorID = Author.id
+WHERE
+    RelationChapterAndAuthor.chapterID IN :chapterIDList
+ORDER BY
+    Author.id DESC;
+
+
+
+selectChaptersAvailableLanguageList:
+SELECT
+    RelationChapterAndLanguage.chapterID AS chapterID,
+    RelationChapterAndLanguage.langID AS abailableLanguageID
+FROM
+    RelationChapterAndLanguage
+WHERE
+    RelationChapterAndLanguage.chapterID IN :chapterIDList;
+
+
+
+selectPicturesTagList:
+SELECT
+    RelationChapterAndTag.chapterID AS chapterID,
+    RelationChapterAndTag.tagID AS tagID,
+    TagTranslation.envID AS tagLangID,
+    TagTranslation.translation AS tagTranslation
+FROM
+    RelationChapterAndTag
+JOIN
+    TagTranslation
+ON
+    TagTranslation.tagID = RelationChapterAndTag.tagID
+WHERE
+    RelationChapterAndTag.chapterID IN :chapterIDList AND TagTranslation.envID = :environmentLangID;
