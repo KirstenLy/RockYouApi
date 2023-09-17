@@ -1,0 +1,40 @@
+CREATE TABLE ContentRegister (
+  id INTEGER NOT NULL PRIMARY KEY,
+  contentType INTEGER NOT NULL,
+  contentID INTEGER NOT NULL
+);
+
+selectContentTypeByID:
+SELECT ContentRegister.contentType FROM ContentRegister WHERE ContentRegister.id = ?;
+
+selectPictureByID:
+SELECT
+    ContentRegister.id AS registerID,
+    Picture.title AS title,
+    Picture.url AS url,
+    Picture.languageID AS langID,
+    Picture.rating AS rating,
+    LanguageTranslation.langId AS availableLanguageID,
+    LanguageTranslation.translation AS availableLanguageTranslation,
+    LanguageTranslation.envID AS availableLanguageEnvID,
+    Author.id AS authorID,
+    Author.name AS authorName,
+    User.id AS userID,
+    User.name AS userName,
+    Tag.id AS tagID,
+    TagTranslation.langID AS tagLangID,
+    TagTranslation.translation AS tagTranslation,
+    (SELECT COUNT(*) FROM Comment WHERE Comment.id = ContentRegister.id) AS commentsCount
+FROM ContentRegister
+INNER JOIN Picture ON ContentRegister.contentID = Picture.id
+INNER JOIN User ON User.id = Picture.userID
+INNER JOIN RelationPictureAndAuthor ON RelationPictureAndAuthor.imageID = Picture.id
+INNER JOIN Author ON Author.id = RelationPictureAndAuthor.authorID
+INNER JOIN RelationPictureAndTag ON RelationPictureAndTag.imageID = Picture.id
+INNER JOIN Tag ON RelationPictureAndTag.tagID = Tag.id
+INNER JOIN RelationTagAndTranslation ON RelationTagAndTranslation.tagID = Tag.id
+INNER JOIN TagTranslation ON TagTranslation.id = RelationTagAndTranslation.translationID
+INNER JOIN RelationPictureAndLanguage ON RelationPictureAndLanguage.imageID = Picture.id
+INNER JOIN Language ON Language.id = RelationPictureAndLanguage.langID
+INNER JOIN LanguageTranslation ON LanguageTranslation.langId = Language.id
+WHERE ContentRegister.id = ?;

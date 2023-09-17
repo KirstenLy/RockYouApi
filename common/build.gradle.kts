@@ -1,0 +1,7 @@
+plugins {
+    applyJVMPlugin()
+}
+
+repositories {
+    mavenCentral()
+}

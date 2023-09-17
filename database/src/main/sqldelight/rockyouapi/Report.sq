@@ -1,0 +1,11 @@
+CREATE TABLE Report (
+  id INTEGER NOT NULL PRIMARY KEY,
+  contentID INTEGER NOT NULL,
+  userID INTEGER,
+  reportText TEXT NOT NULL,
+  isClosed BOOLEAN DEFAULT FALSE
+);
+
+insert:
+INSERT INTO Report (id, contentID, userID, reportText)
+VALUES (?, ?, ?, ?);

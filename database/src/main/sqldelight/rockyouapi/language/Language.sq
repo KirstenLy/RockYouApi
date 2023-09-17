@@ -1,0 +1,7 @@
+CREATE TABLE Language (
+  id INTEGER NOT NULL PRIMARY KEY,
+  isDefault BOOLEAN NOT NULL
+);
+
+selectAll:
+SELECT * FROM Language;

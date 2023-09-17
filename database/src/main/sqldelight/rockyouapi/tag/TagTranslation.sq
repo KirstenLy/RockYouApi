@@ -1,0 +1,5 @@
+CREATE TABLE TagTranslation (
+  id INTEGER NOT NULL PRIMARY KEY,
+  langID INTEGER NOT NULL,
+  translation VARCHAR(255)
+);

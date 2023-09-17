@@ -1,0 +1,5 @@
+CREATE TABLE RelationPictureAndAuthor (
+  id INTEGER NOT NULL PRIMARY KEY,
+  imageID INTEGER NOT NULL,
+  authorID INTEGER NOT NULL
+);

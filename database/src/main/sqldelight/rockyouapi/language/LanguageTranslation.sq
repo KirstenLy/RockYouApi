@@ -1,0 +1,6 @@
+CREATE TABLE LanguageTranslation (
+  id INTEGER NOT NULL PRIMARY KEY,
+  langId INTEGER NOT NULL,
+  translation VARCHAR(255) NOT NULL,
+  envID INTEGER NOT NULL
+);

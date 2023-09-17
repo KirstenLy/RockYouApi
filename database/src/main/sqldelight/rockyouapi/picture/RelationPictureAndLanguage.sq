@@ -1,0 +1,5 @@
+CREATE TABLE RelationPictureAndLanguage (
+  id INTEGER NOT NULL PRIMARY KEY,
+  imageID INTEGER NOT NULL,
+  langID INTEGER NOT NULL
+);

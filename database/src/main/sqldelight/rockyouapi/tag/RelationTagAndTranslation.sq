@@ -1,0 +1,5 @@
+CREATE TABLE RelationTagAndTranslation(
+  id INTEGER NOT NULL PRIMARY KEY,
+  tagID INTEGER NOT NULL,
+  translationID INTEGER NOT NULL
+);
