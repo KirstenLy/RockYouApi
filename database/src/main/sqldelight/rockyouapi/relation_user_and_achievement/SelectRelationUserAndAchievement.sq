@@ -1,0 +1,7 @@
+selectAchievementIDListForUser:
+SELECT
+    RelationUserAndAchivement.achivementID
+FROM
+    RelationUserAndAchivement
+WHERE
+    RelationUserAndAchivement.userID = :userID;

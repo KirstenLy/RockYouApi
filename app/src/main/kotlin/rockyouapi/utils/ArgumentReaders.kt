@@ -16,31 +16,7 @@ internal inline fun Parameters.readNotNullableInt(
     return arg.toIntOrNull() ?: return onArgumentNotIntError()
 }
 
-internal inline fun Parameters.readNotNullableNotNegativeInt(
-    argName: String,
-    onArgumentNullError: () -> Int,
-    onArgumentNotIntError: () -> Int,
-    onArgumentNegativeIntError: () -> Int
-): Int {
-    val arg = this[argName] ?: return onArgumentNullError()
-    val argAsInt = arg.toIntOrNull() ?: return onArgumentNotIntError()
-    if (argAsInt < 0) return onArgumentNegativeIntError()
-    return argAsInt
-}
-
-internal inline fun Parameters.readNotNullablePositiveInt(
-    argName: String,
-    onArgumentNullError: () -> Int,
-    onArgumentNotIntError: () -> Int,
-    onArgumentNegativeOrZeroIntError: () -> Int
-): Int {
-    val arg = this[argName] ?: return onArgumentNullError()
-    val argAsInt = arg.toIntOrNull() ?: return onArgumentNotIntError()
-    if (argAsInt <= 0) return onArgumentNegativeOrZeroIntError()
-    return argAsInt
-}
-
-internal inline fun Parameters.readNullablePositiveLong(
+internal inline fun Parameters.readNullableNotNegativeLong(
     argName: String,
     onArgumentNotLongError: () -> Long,
     onArgumentNegativeLongError: () -> Long
@@ -48,6 +24,18 @@ internal inline fun Parameters.readNullablePositiveLong(
     val arg = this[argName] ?: return null
     val argAsLong = arg.toLongOrNull() ?: return onArgumentNotLongError()
     if (argAsLong < 0) return onArgumentNegativeLongError()
+    return argAsLong
+}
+
+internal inline fun Parameters.readNotNullablePositiveLong(
+    argName: String,
+    onArgumentNullError: () -> Long,
+    onArgumentNotLongError: () -> Long,
+    onArgumentNegativeOrZeroLongError: () -> Long
+): Long {
+    val arg = this[argName] ?: return onArgumentNullError()
+    val argAsLong = arg.toLongOrNull() ?: return onArgumentNotLongError()
+    if (argAsLong <= 0) return onArgumentNegativeOrZeroLongError()
     return argAsLong
 }
 
@@ -63,12 +51,21 @@ internal inline fun Parameters.readNotNullableNotNegativeLong(
     return argAsLong
 }
 
+internal inline fun Parameters.readNullableFilledString(
+    argName: String,
+    onArgumentEmptyError: () -> String,
+): String? {
+    val arg = this[argName] ?: return null
+    if (arg.isBlank()) return onArgumentEmptyError()
+    return arg
+}
+
 internal inline fun Parameters.readNotNullableFilledString(
     argName: String,
     onArgumentNullError: () -> String,
     onArgumentEmptyError: () -> String,
 ): String {
     val arg = this[argName] ?: return onArgumentNullError()
-    if (arg.isEmpty()) return onArgumentEmptyError()
+    if (arg.isBlank()) return onArgumentEmptyError()
     return arg
 }

@@ -1,0 +1,5 @@
+insert:
+INSERT INTO
+    RelationUserAndAchivement(userID, achivementID)
+VALUES
+    (:userID, :achievementID);

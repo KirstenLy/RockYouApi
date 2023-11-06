@@ -1,0 +1,24 @@
+selectAllCharacerBySingleContentID:
+SELECT
+    ContentCharacter.id AS characterID,
+    ContentCharacter.name AS characterName
+FROM
+    RelationContentAndCharacter
+JOIN
+    ContentCharacter
+    ON
+    RelationContentAndCharacter.contentID = :contentID;
+
+
+
+selectAllCharacerByMultipleContentID:
+SELECT
+    RelationContentAndCharacter.contentID AS contentID,
+   ContentCharacter.id AS characterID,
+    ContentCharacter.name AS characterName
+FROM
+    RelationContentAndCharacter
+JOIN
+    ContentCharacter
+    ON
+    RelationContentAndCharacter.contentID IN :contentIDs;

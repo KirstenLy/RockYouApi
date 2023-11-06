@@ -6,17 +6,13 @@ FROM
 
 
 
-selectOneByUserIDAndContentID:
+selectForUser:
 SELECT
-    *
+    Favorite.contentID
 FROM
     Favorite
 WHERE
-    Favorite.userID = :userID
-    AND
-    Favorite.contentID = :contentID
-LIMIT
-    1;
+    Favorite.userID = :userID;
 
 
 
@@ -28,4 +24,21 @@ FROM
 WHERE
     Favorite.userID = :userID
     AND
-    Favorite.contentID = :contentID;
+    Favorite.contentID = :contentID
+ORDER BY
+    Favorite.creationDate
+    DESC;
+
+
+
+isRecordExistByUserIDAndContentID:
+SELECT EXISTS(
+    SELECT
+        1
+    FROM
+        Favorite
+    WHERE
+         Favorite.userID = :userID
+         AND
+         Favorite.contentID = :contentID
+);

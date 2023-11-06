@@ -1,5 +1,0 @@
-insert:
-INSERT INTO
-    UserAuthData(id, userID, password)
-VALUES
-    (:id, :userID, :password);

@@ -1,0 +1,17 @@
+selectOnePasswordHashByUserID:
+SELECT
+    AuthData.passwordHash
+FROM
+    AuthData
+WHERE
+    AuthData.userID = :userID;
+
+
+
+selectRefreshTokenByUserID:
+SELECT
+    AuthData.refreshToken
+FROM
+    AuthData
+WHERE
+    AuthData.userID = :userID;

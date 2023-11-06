@@ -1,11 +1,14 @@
 package database.external.filter
 
-import database.internal.contract.Limitable
-
-/** @see database.external.DatabaseAPI.getPictures */
+/** @see database.external.contract.ProductionDatabaseAPI.getPictures */
 data class PictureListFilter(
-    val langID: Int? = null,
-    val environmentLangID: Byte? = null,
-    override val limit: Long,
-    override val offset: Long?,
-) : Limitable
+    val limit: Long,
+    val offset: Long,
+    val searchText: String? = null,
+    val environmentLangID: Int? = null,
+    val languageIDList: List<Int> = emptyList(),
+    val authorIDList: List<Int> = emptyList(),
+    val includedTagIDList: List<Int> = emptyList(),
+    val excludedTagIDList: List<Int> = emptyList(),
+    val userIDList: List<Int> = emptyList()
+)

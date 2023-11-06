@@ -1,7 +1,7 @@
 package database.external.filter
 
-/** @see database.external.DatabaseAPI.getStoryByID */
+/** @see database.external.contract.ProductionDatabaseAPI.getStoryByID */
 data class StoryByIDFilter(
     val storyID: Int,
-    val environmentLangID: Byte? = null,
+    val environmentLangID: Int? = null,
 )

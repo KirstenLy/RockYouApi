@@ -1,0 +1,5 @@
+insert:
+INSERT INTO
+    Chapter(id, storyID, languageID, userID, text)
+VALUES
+    (:id, :storyID, :languageID, :userID, :text);

@@ -1,0 +1,5 @@
+insert:
+INSERT INTO
+    ContentGroup(id, title)
+VALUES
+    (:id, :title);

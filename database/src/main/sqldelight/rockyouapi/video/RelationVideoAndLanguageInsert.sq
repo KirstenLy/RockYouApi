@@ -1,5 +1,0 @@
-insert:
-INSERT INTO
-    RelationVideoAndLanguage(id, videoID, langID)
-VALUES
-    (:id, :videoID, :langID);

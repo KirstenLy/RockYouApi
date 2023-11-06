@@ -1,0 +1,130 @@
+selectOnePictureBaseInfo:
+SELECT
+    Content.id AS id,
+    Content.title AS title,
+    Content.rating AS rating,
+    Picture.languageID AS baseLanguageID,
+    Picture.url AS url,
+    User.id AS userID,
+    User.name AS userName,
+    User.role AS userRole,
+    (SELECT COUNT(*) FROM Comment WHERE Comment.contentID = Content.id) AS commentsCount
+FROM
+    Content
+JOIN
+    Picture ON Content.id = Picture.id
+JOIN
+    User ON User.id = Picture.userID
+WHERE
+    Content.id = :pictureID;
+
+
+
+selectSeveralPictureBaseInfo:
+SELECT
+    Content.id AS id,
+    Content.title AS title,
+    Content.rating AS rating,
+    Picture.url AS url,
+    Picture.languageID AS baseLanguageID,
+    User.id AS userID,
+    User.name AS userName,
+    User.role AS userRole,
+    (SELECT COUNT(*) FROM Comment WHERE Comment.contentID = Content.id) AS commentsCount
+FROM
+    Content
+JOIN
+    Picture ON Content.id = Picture.id
+JOIN
+    User ON User.id = Picture.userID
+WHERE
+        Content.contentType = 1
+    AND
+        (:searchWord IS NULL OR Content.title LIKE :searchWord)
+    AND
+        (:isLanguageListEmpty IS TRUE
+            OR
+            Picture.languageID
+            IN
+            :languageIDList
+        )
+
+    AND
+        (:isUserListEmpty IS TRUE
+            OR
+            Picture.userID
+            IN
+            :userIDList
+        )
+    AND
+        (:isIncludedTagListEmpty IS TRUE
+            OR
+            Content.id
+            IN (
+                SELECT
+                    RelationContentAndTag.contentID
+                FROM
+                    RelationContentAndTag
+                WHERE
+                    RelationContentAndTag.tagID IN :includedTagIDList)
+    )
+    AND
+        (:isExcludedTagListEmpty IS TRUE
+            OR
+            Content.id
+            NOT IN (
+                SELECT
+                    RelationContentAndTag.contentID
+                FROM
+                    RelationContentAndTag
+                WHERE
+                    RelationContentAndTag.tagID IN :excludedTagIDList)
+    )
+    AND
+        (:isAuthorListEmpty IS TRUE
+            OR
+            Content.id
+            IN (
+                SELECT
+                    RelationContentAndAuthor.contentID
+                FROM
+                    RelationContentAndAuthor
+                WHERE
+                    RelationContentAndAuthor.authorID IN :authorIDList)
+    )
+ORDER BY
+    Content.id DESC
+LIMIT
+    :limit
+OFFSET
+    :offset;
+
+
+
+selectPictureURL:
+SELECT
+    Picture.url
+FROM
+    Picture
+WHERE
+    Picture.id = :pictureID;
+
+
+
+selectPictureLanguageID:
+SELECT
+    Picture.languageID
+FROM
+    Picture
+WHERE
+    Picture.id = :pictureID;
+
+
+
+selectPictureUserID:
+SELECT
+    Picture.userID
+FROM
+    Picture
+WHERE
+    Picture.id = :pictureID;

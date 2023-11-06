@@ -1,0 +1,81 @@
+selectAll:
+SELECT
+    *
+FROM
+    RelationContentAndLanguage;
+
+
+
+selectContentLanguageIDList:
+SELECT
+    RelationContentAndLanguage.languageID
+FROM
+    RelationContentAndLanguage
+WHERE
+    RelationContentAndLanguage.contentID = :contentID
+ORDER BY
+    RelationContentAndLanguage.languageID
+    ASC;
+
+
+
+selectContentLanguageList:
+SELECT
+    RelationContentAndLanguage.languageID AS id,
+    LanguageTranslation.translation AS translation
+FROM
+    RelationContentAndLanguage
+JOIN
+    LanguageTranslation
+    ON
+    LanguageTranslation.langID = RelationContentAndLanguage.languageID
+WHERE
+    RelationContentAndLanguage.contentID = :contentID
+AND
+    LanguageTranslation.envID = :environmentID
+ORDER BY
+    RelationContentAndLanguage.languageID
+    ASC;
+
+
+
+selectContentLanguageListForContentList:
+SELECT
+    RelationContentAndLanguage.contentID AS contentID,
+    RelationContentAndLanguage.languageID AS id,
+    LanguageTranslation.translation AS translation
+FROM
+    RelationContentAndLanguage
+JOIN
+    LanguageTranslation
+    ON
+    LanguageTranslation.langID = RelationContentAndLanguage.languageID
+WHERE
+    RelationContentAndLanguage.contentID IN :contentIDList
+AND
+    LanguageTranslation.envID = :environmentID
+ORDER BY
+    RelationContentAndLanguage.languageID
+    ASC;
+
+
+
+selectContentLanguageListForContentList1:
+SELECT
+    RelationContentAndLanguage.contentID AS contentID,
+    RelationContentAndLanguage.languageID AS languageID
+FROM
+    RelationContentAndLanguage
+WHERE
+    RelationContentAndLanguage.contentID IN :contentIDList
+ORDER BY
+    RelationContentAndLanguage.languageID
+    ASC;
+
+
+
+selectContentIDConnectedWithSomeLanguage:
+SELECT DISTINCT
+    RelationContentAndLanguage.contentID
+FROM
+    RelationContentAndLanguage;

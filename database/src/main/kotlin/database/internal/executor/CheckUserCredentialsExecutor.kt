@@ -1,37 +1,47 @@
 package database.internal.executor
 
+import at.favre.lib.crypto.bcrypt.BCrypt
 import database.external.result.CheckUserCredentialsResult
-import database.internal.entity.toDomain
-import declaration.entity.User
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import rockyouapi.DBTest
+import rockyouapi.Database
 
-/**
- * Check user's credentials. Return user model wrapped by [CheckUserCredentialsResult] if check passed.
- * Don't check login and password conditions, it is caller's task.
- * */
-internal class CheckUserCredentialsExecutor(private val database: DBTest) {
+/** @see execute */
+internal class CheckUserCredentialsExecutor(private val database: Database) {
 
-    suspend fun execute(login: String, password: String): CheckUserCredentialsResult = withContext(Dispatchers.IO) {
-        try {
-            val user = database.userProdQueries
-                .selectAllByName(login)
-                .executeAsOneOrNull()
-                ?: return@withContext CheckUserCredentialsResult.UserNotExist
+    /**
+     * Check match between user and password.
+     *
+     * Respond as:
+     * - [CheckUserCredentialsResult.Ok] User and password matched.
+     * - [CheckUserCredentialsResult.UserNotExist] User not found by [login].
+     * - [CheckUserCredentialsResult.PasswordMismatch] User password not matched with [password].
+     * - [CheckUserCredentialsResult.Error] Smith unexpected happens on query stage.
+     * */
+    suspend fun execute(login: String, password: String): CheckUserCredentialsResult {
+        return withContext(Dispatchers.IO) {
+            try {
+                val existedUserID = database.selectUserQueries
+                    .selectOneIDByName(login)
+                    .executeAsOneOrNull()
+                    ?: return@withContext CheckUserCredentialsResult.UserNotExist
 
-            val userPassword = database.userAuthDataQueries
-                .selectPasswordByUserID(user.id)
-                .executeAsOneOrNull()
-                ?: return@withContext CheckUserCredentialsResult.UserNotExist
+                val existedUserPasswordHash = database.selectAuthQueries
+                    .selectOnePasswordHashByUserID(existedUserID)
+                    .executeAsOne()
 
-            if (userPassword!= password) {
-                return@withContext CheckUserCredentialsResult.PasswordMismatch
+                val isUserPasswordMatches = BCrypt.verifyer()
+                    .verify(password.toCharArray(), existedUserPasswordHash)
+                    .verified
+
+                if (!isUserPasswordMatches) {
+                    return@withContext CheckUserCredentialsResult.PasswordMismatch
+                }
+
+                return@withContext CheckUserCredentialsResult.Ok
+            } catch (t: Throwable) {
+                return@withContext CheckUserCredentialsResult.Error(t)
             }
-
-            return@withContext CheckUserCredentialsResult.Ok(User(user.id, user.name))
-        } catch (t: Throwable) {
-            return@withContext CheckUserCredentialsResult.UnexpectedError(t)
         }
     }
 }

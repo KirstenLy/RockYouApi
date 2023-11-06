@@ -1,0 +1,35 @@
+selectAllGroupForContent:
+SELECT
+    ContentGroupMember.groupID AS groupID
+FROM
+    ContentGroupMember
+WHERE
+    ContentGroupMember.contentID = :contentID;
+
+
+
+selectAllGroupForContentList:
+SELECT
+    ContentGroupMember.contentID AS contentID,
+    ContentGroupMember.groupID AS groupID
+FROM
+    ContentGroupMember
+WHERE
+    ContentGroupMember.contentID IN :contentID;
+
+
+
+selectAllForGroup:
+SELECT
+    ContentGroupMember.groupID AS groupID,
+    ContentGroupMember.contentID AS contentID,
+    Content.title AS contentTitle,
+    ContentGroupMember.orderIDX AS orderIDX
+FROM
+    ContentGroupMember
+JOIN
+    Content
+    ON
+    ContentGroupMember.contentID = Content.id
+WHERE
+    ContentGroupMember.groupID IN :groupIDList;

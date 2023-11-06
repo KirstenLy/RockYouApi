@@ -1,9 +1,0 @@
-checkIfRecordExist:
-SELECT
-    1
-FROM
-    Picture
-WHERE
-    Picture.id = :contentID
-LIMIT
-    1;

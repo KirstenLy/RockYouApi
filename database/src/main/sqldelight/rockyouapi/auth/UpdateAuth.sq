@@ -1,0 +1,14 @@
+updateRefreshTokenForUser:
+UPDATE
+    AuthData
+SET
+    refreshToken = :refreshToken
+WHERE
+    AuthData.userID = :userID;
+
+
+clearRefreshTokenForAllUser:
+UPDATE
+    AuthData
+SET
+    refreshToken = NULL;

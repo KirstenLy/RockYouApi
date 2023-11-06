@@ -1,6 +1,6 @@
 package database.external.operation
 
-/** Operations that available for user. */
+/** Operations with favorite that available for user. */
 enum class FavoriteOperation {
     ADD,
     REMOVE

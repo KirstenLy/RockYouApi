@@ -1,0 +1,5 @@
+insert:
+INSERT INTO
+    Report(id, contentID, userID, reportText)
+VALUES
+    (:id, :contentID, :userID, :reportText);

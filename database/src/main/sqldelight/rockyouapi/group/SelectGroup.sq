@@ -1,0 +1,25 @@
+selectGroupByID:
+SELECT
+    ContentGroup.title AS groupTitle
+FROM
+    ContentGroup
+JOIN
+    ContentGroupMember
+    ON
+    ContentGroupMember.groupID = ContentGroup.id
+JOIN
+    Content
+    ON
+    Content.id = ContentGroupMember.contentID
+WHERE
+    ContentGroup.id = :groupID;
+
+
+selectGroupInfoByID:
+SELECT
+    ContentGroup.id AS groupID,
+    ContentGroup.title AS groupTitle
+FROM
+    ContentGroup
+WHERE
+    ContentGroup.id IN :groupID;

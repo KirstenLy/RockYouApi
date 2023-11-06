@@ -1,5 +1,0 @@
-insert:
-INSERT INTO
-    RelationPictureAndAuthor(pictureID, authorID)
-VALUES
-    (:pictureID, :authorID);

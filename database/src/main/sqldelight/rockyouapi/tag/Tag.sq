@@ -1,3 +1,0 @@
--- CREATE TABLE Tag (
---   id SMALLINT NOT NULL PRIMARY KEY
--- );

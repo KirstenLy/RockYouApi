@@ -1,7 +1,7 @@
 plugins {
     applyJVMPlugin()
     applyKotlinSerializationPlugin()
-    id("app.cash.sqldelight") version "2.0.0"
+    applySQLDelightlugin()
 }
 
 repositories {
@@ -9,41 +9,36 @@ repositories {
     mavenCentral()
 }
 
+tasks.test {
+    useJUnitPlatform()
+    testLogging {
+        events("passed", "skipped", "failed")
+    }
+    applyParallelTest()
+}
+
 sqldelight {
     databases {
-        create("DBTest") {
+        create("Database") {
             packageName.set("rockyouapi")
             dialect("app.cash.sqldelight:mysql-dialect:2.0.0")
             deriveSchemaFromMigrations = true
         }
-
-//        create("DBProduction") {
-//            packageName.set("rockyouapi")
-//            dialect("app.cash.sqldelight:mysql-dialect:2.0.0")
-//            deriveSchemaFromMigrations = true
-//        }
     }
 }
 
 dependencies {
-    implementation(project(":declaration"))
     implementation(project(":common"))
-    implementation(project(":test"))
 
-    implementation(Dependencies.Database.Exposed.core)
-    implementation(Dependencies.Database.Exposed.dao)
-    implementation(Dependencies.Database.Exposed.jdbc)
+    implementation(Dependencies.Kotlin.serializationJson)
 
-    implementation(Dependencies.Database.H2.database)
+    implementation(Dependencies.Security.bCrypt)
 
     implementation(Dependencies.Database.MySQL.connectorJava)
+    implementation(Dependencies.Database.SQLDelight.jdbcDriver)
+    implementation(Dependencies.Database.SQLDelight.coroutinesExtenstions)
 
-    implementation("app.cash.sqldelight:jdbc-driver:2.0.0")
-    implementation("app.cash.sqldelight:coroutines-extensions:2.0.0")
-    implementation("app.cash.sqldelight:sqlite-driver:2.0.0")
-    testImplementation("app.cash.sqldelight:sqlite-driver:2.0.0")
-
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
-
-    testImplementation(Dependencies.Kotlin.testJUnit)
+    testImplementation(platform(Dependencies.Testing.jUnitBOM))
+    testImplementation(Dependencies.Testing.jUnitJupiter)
+    testImplementation(Dependencies.Testing.coroutines)
 }

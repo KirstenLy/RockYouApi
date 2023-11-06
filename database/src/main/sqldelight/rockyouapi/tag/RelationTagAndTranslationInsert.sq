@@ -1,5 +1,0 @@
--- insert:
--- INSERT INTO
---     RelationTagAndTranslation(id, tagID, translationID)
--- VALUES
---     (?, ?, ?);

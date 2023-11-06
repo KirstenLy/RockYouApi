@@ -1,5 +1,0 @@
-insert:
-INSERT INTO
-    RelationStoryAndTag(id, storyID, tagID)
-VALUES
-    (:id, :storyID, :tagID);

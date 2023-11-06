@@ -1,30 +1,70 @@
 package rockyouapi.route.vote
 
-import database.external.DatabaseAPI
+import database.external.contract.ProductionDatabaseAPI
 import database.external.result.VoteResult
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
-import io.ktor.server.response.*
+import io.ktor.server.auth.jwt.*
+import io.ktor.server.request.*
 import io.ktor.server.routing.*
-import rockyouapi.auth.UserIDPrincipal
 import rockyouapi.operation.ChangeRatingOperation
+import rockyouapi.operation.FavoriteOperation
 import rockyouapi.route.Routes
+import rockyouapi.route.Routes.Companion.JWT_AUTHORIZATION_PROVIDER_KEY
+import rockyouapi.security.*
+import rockyouapi.security.CLAIM_KEY_TOKEN_TYPE
+import rockyouapi.security.checkTokenType
 import rockyouapi.utils.*
 import database.external.operation.VoteOperation as DBChangeRatingOperation
 
 /**
- * Route to change content rating.
- * Requirements: operation type(upvote/downvote), contentID, user token.
- * @see rockyouapi.route.auth.authLoginRoute for token info.
+ * Route to vote for content.
+ *
+ * Requirements: token.
+ * Additional: languageID, offset, environmentID.
+ *
+ * Respond as:
+ * - [HttpStatusCode.OK] Content voted. Respond with ok status only.
+ * - [HttpStatusCode.BadRequest] If limit not presented or invalid or languageID/offset/environmentID invalid.
+ * - [HttpStatusCode.InternalServerError] If smith unexpected happens on database query stage.
  * */
-internal fun Route.voteRoute(databaseAPI: DatabaseAPI) {
+internal fun Route.voteRoute(productionDatabaseAPI: ProductionDatabaseAPI) {
 
-    authenticate("auth-bearer") {
+    authenticate(JWT_AUTHORIZATION_PROVIDER_KEY) {
 
         post(Routes.Vote.path) {
 
-            val parameters = call.parameters
+            val principal = call.principal<JWTPrincipal>() ?: run {
+                call.respondAsTokenNotFoundOrNotSupported()
+                return@post
+            }
+
+            principal.checkTokenType(
+                tokenTypeClaimKey = CLAIM_KEY_TOKEN_TYPE,
+                onClaimNotPresented = {
+                    call.respondAsTokenHasNoType()
+                    return@post
+                },
+                onRefreshType = {
+                    call.respondAsTokenHasRefreshType()
+                    return@post
+                },
+                onAccessType = {
+                    // It's expected scenario, continue execution
+                },
+                onUnknownType = {
+                    call.respondAsTokenHasInvalidType()
+                    return@post
+                }
+            )
+
+            val userID = principal.tryToExtractUserID {
+                call.respondAsTokenHasNoOwner()
+                return@post
+            }
+
+            val parameters = call.receiveParameters()
 
             val contentID = parameters.readNotNullableInt(
                 argName = Routes.Vote.getContentIDArgName(),
@@ -35,7 +75,6 @@ internal fun Route.voteRoute(databaseAPI: DatabaseAPI) {
                 onArgumentNotIntError = {
                     call.respondAsIncorrectTypeWhenIntExpected(Routes.Vote.getContentIDArgName())
                     return@post
-
                 },
             )
 
@@ -55,43 +94,77 @@ internal fun Route.voteRoute(databaseAPI: DatabaseAPI) {
                 ChangeRatingOperation.UPVOTE.operationArgument -> DBChangeRatingOperation.UPVOTE
                 ChangeRatingOperation.DOWNVOTE.operationArgument -> DBChangeRatingOperation.DOWNVOTE
                 else -> {
-                    val argName = Routes.Vote.getOperationTypeArgName()
-                    call.respond(HttpStatusCode.BadRequest, "$argName argument must be 0(downvotw) or 1(upvote)")
+                    call.respondAsInvalidOperationType()
                     return@post
                 }
             }
 
-            val userID = call.principal<UserIDPrincipal>()?.userID ?: run {
-                call.respondAsUserUnexpectedMissed()
-                return@post
-            }
-
-            when (val upvoteResult = databaseAPI.vote(userID, contentID, dbOperationType)) {
-                is VoteResult.OK -> {
-                    call.respond(HttpStatusCode.OK)
-                    return@post
-                }
+            when (val upvoteResult = productionDatabaseAPI.vote(userID, contentID, dbOperationType)) {
 
                 is VoteResult.ContentNotExist -> {
-                    call.respondAsContentNotExistByID(contentID)
+                    call.respondAsContentNotFoundByID(contentID)
+                    return@post
+                }
+
+                is VoteResult.UserNotExist -> {
+                    call.respondAsUserNotExistByID(userID)
                     return@post
                 }
 
                 is VoteResult.AlreadyVoted -> {
-                    call.respond(HttpStatusCode.Conflict, "User already vote same way")
+                    call.respondAsAlreadyVoted()
                     return@post
                 }
 
                 is VoteResult.AlreadyDownVoted -> {
-                    call.respond(HttpStatusCode.Conflict, "User already vote same way")
+                    call.respondAsAlreadyDownvoted()
                     return@post
                 }
 
                 is VoteResult.Error -> {
-                    call.respondAsUnexpectedError(upvoteResult.t)
+                    val errorText = buildString {
+                        append("Failed to vote.")
+                        appendLine()
+                        append("ContentID: $contentID")
+                        appendLine()
+                        append("UserID: $userID")
+                        appendLine()
+                        append("OperationType: $operationType")
+                    }
+                    call.logErrorToFile(errorText, upvoteResult.t)
+                    call.respondAsErrorByException(upvoteResult.t)
+                    return@post
+                }
+
+                is VoteResult.OK -> {
+                    call.respondAsOkWithUnit()
                     return@post
                 }
             }
         }
     }
+}
+
+private suspend fun ApplicationCall.respondAsInvalidOperationType() {
+    val argName = Routes.Vote.getOperationTypeArgName()
+    val upvoteOperationArgument = FavoriteOperation.ADD.operationArgument
+    val downvoteOperationArgument = FavoriteOperation.REMOVE.operationArgument
+    respondAsError(
+        errorCode = HttpStatusCode.BadRequest,
+        errorText = "$argName argument must be $upvoteOperationArgument for upvote and $downvoteOperationArgument for downvote"
+    )
+}
+
+private suspend fun ApplicationCall.respondAsAlreadyVoted() {
+    respondAsError(
+        errorCode = HttpStatusCode.Conflict,
+        errorText = "User already vote same way"
+    )
+}
+
+private suspend fun ApplicationCall.respondAsAlreadyDownvoted() {
+    respondAsError(
+        errorCode = HttpStatusCode.Conflict,
+        errorText = "User already vote same way"
+    )
 }

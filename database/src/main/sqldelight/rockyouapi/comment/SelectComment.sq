@@ -3,11 +3,12 @@ SELECT
     Comment.id AS id,
     Comment.contentID AS contentID,
     Comment.text AS text,
+    Comment.creationDate AS creationTime,
     User.id AS userID,
     User.name AS userName
 FROM
     Comment
-INNER JOIN
+JOIN
     User
     ON
     User.id = Comment.userID
@@ -20,3 +21,73 @@ LIMIT
     :limit
 OFFSET
     :offset;
+
+
+
+selectAllForContent:
+SELECT
+    Comment.id AS id,
+    Comment.contentID AS contentID,
+    Comment.text AS text,
+    User.id AS userID,
+    User.name AS userName
+FROM
+    Comment
+JOIN
+    User
+    ON
+    User.id = Comment.userID
+WHERE
+    Comment.contentID = :contentID
+ORDER BY
+    Comment.id
+    DESC;
+
+
+
+selectAllByContentAndUser:
+SELECT
+    Comment.id AS id,
+    Comment.contentID AS contentID,
+    Comment.text AS text
+FROM
+    Comment
+WHERE
+    Comment.contentID = :contentID
+    AND
+    Comment.userID = :userID
+ORDER BY
+    Comment.id
+    DESC;
+
+
+
+countForContent:
+SELECT
+    COUNT(id)
+FROM
+    Comment
+WHERE
+    Comment.contentID = :contentID;
+
+
+
+countForUser:
+SELECT
+    COUNT(id)
+FROM
+    Comment
+WHERE
+    Comment.userID = :userID;
+
+
+
+countForContentAndUser:
+SELECT
+    COUNT(id)
+FROM
+    Comment
+WHERE
+    Comment.contentID = :contentID
+    AND
+    Comment.userID = :userID;

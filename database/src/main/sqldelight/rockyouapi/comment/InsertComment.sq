@@ -1,5 +1,5 @@
 insert:
 INSERT INTO
-    Comment(id, contentID, userID, text)
+    Comment(id, contentID, userID, text, creationDate)
 VALUES
-    (:id, :contentID, :userID, :text);
+    (:id, :contentID, :userID, :text, :creationDate);

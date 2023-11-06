@@ -1,0 +1,46 @@
+selectAll:
+SELECT
+    *
+FROM
+    VoteHistory;
+
+
+
+selectForUser:
+SELECT
+    VoteHistory.contentID,
+    VoteHistory.vote
+FROM
+    VoteHistory
+WHERE
+    VoteHistory.userID = :userID;
+
+
+
+countForUser:
+SELECT
+    COUNT(id)
+FROM
+    VoteHistory
+WHERE
+    VoteHistory.userID = :userID;
+
+
+
+selectAllByUserIDAndContentID:
+SELECT
+    *
+FROM
+    VoteHistory
+WHERE
+    VoteHistory.userID = :userID AND VoteHistory.contentID = :contentID;
+
+
+
+selectVoteByUserIDAndContentID:
+SELECT
+    VoteHistory.vote
+FROM
+    VoteHistory
+WHERE
+    VoteHistory.userID = :userID AND VoteHistory.contentID = :contentID;

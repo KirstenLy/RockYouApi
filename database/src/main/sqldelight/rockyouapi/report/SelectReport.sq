@@ -1,0 +1,18 @@
+selectAll:
+SELECT
+    *
+FROM
+    Report;
+
+
+
+selectAllByContentID:
+SELECT
+    *
+FROM
+    Report
+WHERE
+    Report.contentID = :contentID
+ORDER BY
+    Report.id
+    DESC;

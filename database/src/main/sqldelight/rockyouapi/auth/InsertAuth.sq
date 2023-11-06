@@ -1,0 +1,5 @@
+insert:
+INSERT INTO
+    AuthData(id, userID, passwordHash, refreshToken)
+VALUES
+    (:id, :userID, :passwordHash, :refreshToken);

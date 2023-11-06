@@ -1,0 +1,5 @@
+insert:
+INSERT INTO
+    Content(id, originalID, contentType, title, description, rating)
+VALUES
+    (:id,:originalContentID, :contentType, :title, :description, :rating);

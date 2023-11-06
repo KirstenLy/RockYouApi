@@ -1,26 +1,36 @@
 package rockyouapi.route.comment
 
-import rockyouapi.route.Routes
-import rockyouapi.utils.*
-import database.external.DatabaseAPI
+import common.utils.zeroOnNull
+import database.external.contract.ProductionDatabaseAPI
 import database.external.filter.CommentListFilter
-import database.external.result.SimpleListResult
-import declaration.entity.Comment
+import database.external.result.common.SimpleListResult
 import io.ktor.http.*
 import io.ktor.server.application.*
-import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import rockyouapi.configuration.COMMENT_MAXIMUM_LENGTH
+import rockyouapi.configuration.LIMIT_ARGUMENT_MAXIMUM_VALUE
+import rockyouapi.model.Comment
+import database.external.model.Comment as DBComment
+import rockyouapi.route.Routes
+import rockyouapi.toWeb
+import rockyouapi.utils.*
 
 /**
- * Route to get comments to content. Pagination support.
+ * Route to get comment list for content.
+ *
  * Requirements: contentID, limit.
  * Additional: offset.
+ *
+ * Respond as:
+ * - [HttpStatusCode.OK] Data fetched. Respond with list of [Comment].
+ * - [HttpStatusCode.BadRequest] If contentID or limit not presented or invalid.
+ * - [HttpStatusCode.InternalServerError] If smith unexpected happens on database query stage.
  * */
-internal fun Route.commentListRoute(databaseAPI: DatabaseAPI) {
+internal fun Route.commentListRoute(productionDatabaseAPI: ProductionDatabaseAPI) {
 
     get(Routes.CommentList.path) {
 
-        val contentID = call.parameters.readNotNullableNotNegativeInt(
+        val contentID = call.parameters.readNotNullableInt(
             argName = Routes.CommentList.getContentIDArgName(),
             onArgumentNullError = {
                 call.respondAsArgumentRequiredError(Routes.CommentList.getContentIDArgName())
@@ -30,29 +40,30 @@ internal fun Route.commentListRoute(databaseAPI: DatabaseAPI) {
                 call.respondAsIncorrectTypeWhenIntExpected(Routes.CommentList.getContentIDArgName())
                 return@get
             },
-            onArgumentNegativeIntError = {
-                call.respondAsMustBeNonNegativeArgumentValue(Routes.CommentList.getContentIDArgName())
-                return@get
-            },
         )
 
-        val limit = call.parameters.readNotNullablePositiveInt(
+        val limit = call.parameters.readNotNullablePositiveLong(
             argName = Routes.CommentList.getContentLimitArgName(),
             onArgumentNullError = {
                 call.respondAsArgumentRequiredError(Routes.CommentList.getContentLimitArgName())
                 return@get
             },
-            onArgumentNotIntError = {
-                call.respondAsIncorrectTypeWhenIntExpected(Routes.CommentList.getContentLimitArgName())
+            onArgumentNotLongError = {
+                call.respondAsIncorrectTypeWhenLongExpected(Routes.CommentList.getContentLimitArgName())
                 return@get
             },
-            onArgumentNegativeOrZeroIntError = {
-                call.respond(HttpStatusCode.OK, emptyList<Comment>())
+            onArgumentNegativeOrZeroLongError = {
+                call.respondAsMustBeNonNegativeArgumentValue(Routes.CommentList.getContentLimitArgName())
                 return@get
             },
         )
 
-        val offset = call.parameters.readNullablePositiveLong(
+        if (limit > LIMIT_ARGUMENT_MAXIMUM_VALUE) {
+            call.respondAsIntArgumentTooBig(Routes.CommentList.getContentLimitArgName(), COMMENT_MAXIMUM_LENGTH)
+            return@get
+        }
+
+        val offset = call.parameters.readNullableNotNegativeLong(
             argName = Routes.CommentList.getContentOffsetArgName(),
             onArgumentNotLongError = {
                 call.respondAsIncorrectTypeWhenLongExpected(Routes.CommentList.getContentOffsetArgName())
@@ -66,17 +77,26 @@ internal fun Route.commentListRoute(databaseAPI: DatabaseAPI) {
 
         val requestFilter = CommentListFilter(
             contentID = contentID,
-            offset = offset,
-            limit = limit.toLong()
+            offset = offset.zeroOnNull(),
+            limit = limit
         )
-        when (val getCommentsRequestResult = databaseAPI.getComments(requestFilter)) {
-            is SimpleListResult.Data -> {
-                call.respond(HttpStatusCode.OK, getCommentsRequestResult.data)
+
+        when (val getCommentsRequestResult = productionDatabaseAPI.getComments(requestFilter)) {
+
+            is SimpleListResult.Error -> {
+                call.logErrorToFile("Failed to get comments. Filter: $requestFilter", getCommentsRequestResult.t)
+                call.respondAsErrorByException(getCommentsRequestResult.t)
                 return@get
             }
 
-            is SimpleListResult.Error -> {
-                call.respondAsUnexpectedError(getCommentsRequestResult.t)
+            is SimpleListResult.Data -> {
+                try {
+                    val responseData = getCommentsRequestResult.data.map(DBComment::toWeb)
+                    call.respondAsOkWithData(responseData)
+                } catch (t: Throwable) {
+                    call.logErrorToFile("Respond as data failed. Stage: get comment list. Filter: $requestFilter", t)
+                    call.respondAsErrorByException(t)
+                }
                 return@get
             }
         }

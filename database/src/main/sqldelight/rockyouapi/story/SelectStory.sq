@@ -1,70 +1,130 @@
-selectStoryBaseInfo:
+selectOneStoryBaseInfo:
 SELECT
-    ContentRegister.id AS id,
-    Story.title AS title,
+    Content.id AS id,
+    Content.title AS title,
+    Content.rating AS rating,
     Story.languageID AS languageID,
+    Story.scheme AS scheme,
     User.id AS userID,
     User.name AS userName,
-    Story.rating AS rating,
+    User.role AS userRole,
+    (SELECT COUNT(*) FROM Comment WHERE Comment.contentID = Content.id) AS commentsCount
+FROM
+    Content
+JOIN
+    Story ON Content.id = Story.id
+JOIN
+    User ON User.id = Story.userID
+WHERE
+    Content.id = :pictureID;
+
+
+
+selectSeveralStoryBaseInfo:
+SELECT
+    Content.id AS id,
+    Content.title AS title,
+    Content.rating AS rating,
+    Story.languageID AS baseLanguageID,
     Story.scheme AS scheme,
-    (SELECT COUNT(*) FROM Comment WHERE Comment.contentID = ContentRegister.id) AS commentsCount
+    User.id AS userID,
+    User.name AS userName,
+    User.role AS userRole,
+    (SELECT COUNT(*) FROM Comment WHERE Comment.contentID = Content.id) AS commentsCount
 FROM
-    ContentRegister
-INNER JOIN
+    Content
+JOIN
+    Story ON Content.id = Story.id
+JOIN
+    User ON User.id = Story.userID
+WHERE
+        Content.contentType = 3
+    AND
+        (:searchWord IS NULL OR Content.title LIKE :searchWord)
+    AND
+        (:isLanguageListEmpty IS TRUE
+            OR
+            Story.languageID
+            IN
+            :languageIDList
+        )
+
+    AND
+        (:isUserListEmpty IS TRUE
+            OR
+            Story.userID
+            IN
+            :userIDList
+        )
+    AND
+        (:isIncludedTagListEmpty IS TRUE
+            OR
+            Content.id
+            IN (
+                SELECT
+                    RelationContentAndTag.contentID
+                FROM
+                    RelationContentAndTag
+                WHERE
+                    RelationContentAndTag.tagID IN :includedTagIDList)
+    )
+    AND
+        (:isExcludedTagListEmpty IS TRUE
+            OR
+            Content.id
+            NOT IN (
+                SELECT
+                    RelationContentAndTag.contentID
+                FROM
+                    RelationContentAndTag
+                WHERE
+                    RelationContentAndTag.tagID IN :excludedTagIDList)
+    )
+    AND
+        (:isAuthorListEmpty IS TRUE
+            OR
+            Content.id
+            IN (
+                SELECT
+                    RelationContentAndAuthor.contentID
+                FROM
+                    RelationContentAndAuthor
+                WHERE
+                    RelationContentAndAuthor.authorID IN :authorIDList)
+    )
+ORDER BY
+    Content.id DESC
+LIMIT
+    :limit
+OFFSET
+    :offset;
+
+
+
+selectStoryLanguageID:
+SELECT
+    Story.languageID
+FROM
     Story
-    ON
-    ContentRegister.id = Story.id
-INNER JOIN
-    User
-    ON
-    Story.userID = User.id
 WHERE
-    ContentRegister.id = :registerID;
+    Story.id = :storyID;
 
 
 
-selectStoryAuthors:
+selectStoryUserID:
 SELECT
-    Author.id AS authorID,
-    Author.name AS authorName
+    Story.userID
 FROM
-    RelationStoryAndAuthor
-JOIN
-    Author
-    ON
-    RelationStoryAndAuthor.authorID = Author.id
+    Story
 WHERE
-    RelationStoryAndAuthor.storyID = :storyID
-ORDER BY
-    RelationStoryAndAuthor.authorID
-    ASC;
+    Story.id = :storyID;
 
 
 
-selectStoryAvailableLangIDs:
+selectStoryScheme:
 SELECT
-    RelationStoryAndLanguage.langID AS abailableLanguageID
+    Story.scheme
 FROM
-    RelationStoryAndLanguage
+    Story
 WHERE
-    RelationStoryAndLanguage.storyID = :storyID
-ORDER BY
-    RelationStoryAndLanguage.langID
-    ASC;
-
-
-
-selectStoryTags:
-SELECT
-    RelationStoryAndTag.tagID AS tagID,
-    TagTranslation.translation AS tagTranslation
-FROM
-    RelationStoryAndTag
-JOIN
-    TagTranslation
-ON
-    TagTranslation.tagID = RelationStoryAndTag.tagID
-WHERE
-    RelationStoryAndTag.storyID = :storyID AND TagTranslation.envID = :environmentLangID
-ORDER BY
-    RelationStoryAndTag.tagID ASC;
+    Story.id = :storyID;

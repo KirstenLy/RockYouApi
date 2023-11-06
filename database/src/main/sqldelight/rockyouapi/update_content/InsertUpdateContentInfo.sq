@@ -1,0 +1,5 @@
+insert:
+INSERT INTO
+    UpdateContentInfoRequest(contentID, userID, requestText)
+VALUES
+    (:contentID, :userID, :requestText);

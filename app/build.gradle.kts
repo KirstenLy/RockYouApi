@@ -46,7 +46,7 @@ ktor {
             }
 
             localImageName.set("kirstenly/webserver")
-            imageTag.set("1.0")
+            imageTag.set("0.0.6")
         }
     }
 }
@@ -56,11 +56,19 @@ repositories {
     mavenCentral()
 }
 
+tasks.test {
+    useJUnitPlatform()
+    testLogging {
+        events("passed", "skipped", "failed")
+    }
+    systemProperties["junit.jupiter.execution.parallel.enabled"] = true
+    systemProperties["junit.jupiter.execution.parallel.mode.default"] = "concurrent"
+    maxParallelForks = (Runtime.getRuntime().availableProcessors() / 2).takeIf { it > 0 } ?: 1
+}
+
 dependencies {
     implementation(project(":common"))
     implementation(project(":database"))
-    implementation(project(":declaration"))
-    implementation(project(":test"))
 
     implementation(Dependencies.Log.Logback.classic)
 
@@ -69,12 +77,15 @@ dependencies {
     implementation(Dependencies.Ktor.serverAutoHeadResponce)
     implementation(Dependencies.Ktor.serverContentNegotiationJVM)
     implementation(Dependencies.Ktor.serverResources)
+    implementation(Dependencies.Ktor.serverDoubleReceive)
     implementation(Dependencies.Ktor.serializationJSON)
     implementation(Dependencies.Ktor.serverAuth)
+    implementation(Dependencies.Ktor.serverAuthJWT)
     implementation(Dependencies.Ktor.serverSession)
 
+    testImplementation(platform(Dependencies.Testing.jUnitBOM))
     testImplementation(Dependencies.Ktor.serverTestJVM)
-    testImplementation(Dependencies.Kotlin.testJUnit)
-
-    implementation(Dependencies.Database.MySQL.connectorJava)
+    testImplementation(Dependencies.Testing.jUnitJupiter)
+    testImplementation(Dependencies.Testing.coroutines)
+    testImplementation(Dependencies.Testing.jUnitJupiterMockito)
 }

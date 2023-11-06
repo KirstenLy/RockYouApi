@@ -1,11 +1,10 @@
 package database.external
 
-import database.external.test.database.DatabaseAPIForTests
-import database.external.test.database.TestDatabaseBuilder
-import database.internal.creator.test.initMockDatabaseApi
-import database.internal.creator.production.initProductionDatabase
-import database.internal.creator.test.initTestDatabaseApi
-import declaration.DatabaseConfiguration
+import database.external.contract.ProductionDatabaseAPI
+import database.external.contract.TestDatabaseAPI
+import database.internal.creator.createProductionDatabaseAPI
+import database.internal.creator.createProductionDatabaseWithTestAPI
+import org.jetbrains.annotations.TestOnly
 
 /** API of Database feature.*/
 object DatabaseFeature {
@@ -13,27 +12,15 @@ object DatabaseFeature {
     /**
      * Init database API.
      * Connect to a filled database.
-     * Don't make any migrations. It will fall by scheme mismatch.
+     * Make migrations if needed.
      * */
-    fun connectToProductionDatabase(connectionConfig: DatabaseConfiguration): DatabaseAPI {
-        return initProductionDatabase(connectionConfig)
+    suspend fun connectToProductionDatabase(connectionConfig: DatabaseConfiguration): ProductionDatabaseAPI {
+        return createProductionDatabaseAPI(connectionConfig)
     }
 
-    /**
-     * Create test database and init test API.
-     * It's in memory SQLite database, constructed and filled in runtime.
-     * @return main [DatabaseAPI] and [database.external.test.database.DatabaseAPIAdditionalScenarios] to help read
-     * records from a database for test purposes.
-     * */
-    fun connectToTestDatabase(dataBuilder: TestDatabaseBuilder.() -> DatabaseAPI): DatabaseAPIForTests {
-        return initTestDatabaseApi(dataBuilder)
-    }
-
-    /**
-     * Return mock API.
-     * Don't make any connections. Respond by invalid data.
-     * */
-    fun getMockDatabase(): DatabaseAPI {
-        return initMockDatabaseApi()
+    /** Same as [connectToProductionDatabase], but have additional api for test purpose. */
+    @TestOnly
+    suspend fun connectToProductionDatabaseWithTestApi(connectionConfig: DatabaseConfiguration): Pair<ProductionDatabaseAPI, TestDatabaseAPI> {
+        return createProductionDatabaseWithTestAPI(connectionConfig)
     }
 }

@@ -1,0 +1,13 @@
+selectAllLanguages:
+SELECT
+    *
+FROM
+    Language;
+
+
+
+selectAllLanguageID:
+SELECT
+    Language.id
+FROM
+    Language;

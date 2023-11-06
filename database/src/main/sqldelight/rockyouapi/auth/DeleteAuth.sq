@@ -1,0 +1,9 @@
+deleteRefreshToken:
+DELETE FROM
+    AuthData
+WHERE
+    AuthData.refreshToken = :refreshToken;
+
+
+deleteAllAuthData:
+TRUNCATE TABLE AuthData;

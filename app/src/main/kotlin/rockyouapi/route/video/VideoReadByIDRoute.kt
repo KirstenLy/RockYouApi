@@ -1,24 +1,32 @@
 package rockyouapi.route.video
 
-import rockyouapi.route.Routes
-import rockyouapi.utils.*
-import rockyouapi.utils.respondAsArgumentRequiredError
-import database.external.DatabaseAPI
+import database.external.contract.ProductionDatabaseAPI
 import database.external.filter.VideoByIDFilter
-import database.external.result.SimpleOptionalDataResult
+import database.external.result.common.SimpleOptionalDataResult
 import io.ktor.http.*
 import io.ktor.server.application.*
-import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import rockyouapi.model.Video
+import rockyouapi.route.Routes
+import rockyouapi.toWeb
+import rockyouapi.utils.*
 
 /**
- * Route to get one video.
- * Requirements: contentID.
+ * Route to get video by ID.
+ *
+ * Requirements: videoID.
+ * Additional: environmentID.
+ *
+ * Respond as:
+ * - [HttpStatusCode.OK] Data fetched. Respond with [Video].
+ * - [HttpStatusCode.BadRequest] If videoID not presented or invalid or environmentID invalid.
+ * - [HttpStatusCode.InternalServerError] If smith unexpected happens on database query stage.
  * */
-internal fun Route.videoReadByIDRoute(databaseAPI: DatabaseAPI) {
+internal fun Route.videoReadByIDRoute(productionDatabaseAPI: ProductionDatabaseAPI) {
 
     get(Routes.VideoByID.path) {
-        val videoID = call.parameters.readNotNullableNotNegativeInt(
+
+        val videoID = call.parameters.readNotNullableInt(
             argName = Routes.VideoByID.getVideoIDArgName(),
             onArgumentNullError = {
                 call.respondAsArgumentRequiredError(Routes.VideoByID.getVideoIDArgName())
@@ -29,10 +37,6 @@ internal fun Route.videoReadByIDRoute(databaseAPI: DatabaseAPI) {
                 return@get
 
             },
-            onArgumentNegativeIntError = {
-                call.respondAsMustBeNonNegativeArgumentValue(Routes.VideoByID.getVideoIDArgName())
-                return@get
-            }
         )
 
         val environmentLangID = call.parameters.readNullableInt(
@@ -43,25 +47,37 @@ internal fun Route.videoReadByIDRoute(databaseAPI: DatabaseAPI) {
             }
         )
 
-        val filter = VideoByIDFilter(
+        val requestFilter = VideoByIDFilter(
             videoID = videoID,
-            environmentLangID = environmentLangID?.toByte()
+            environmentLangID = environmentLangID
         )
 
-        when (val getVideoRequestResult = databaseAPI.getVideoByID(filter)) {
-            is SimpleOptionalDataResult.Data -> {
-                call.respond(HttpStatusCode.OK, getVideoRequestResult.model)
-                return@get
-            }
+        when (val getVideoRequestResult = productionDatabaseAPI.getVideoByID(requestFilter)) {
 
             is SimpleOptionalDataResult.DataNotFounded -> {
-                call.respondAsContentNotExistByID(videoID)
+                call.respondAsContentNotFoundByID(videoID)
                 return@get
-
             }
 
             is SimpleOptionalDataResult.Error -> {
-                call.respondAsUnexpectedError(getVideoRequestResult.t)
+                call.logErrorToFile("Failed to get video by ID. Filter: $requestFilter", getVideoRequestResult.t)
+                call.respondAsErrorByException(getVideoRequestResult.t)
+                return@get
+            }
+
+            is SimpleOptionalDataResult.Data -> {
+                try {
+                    val response = getVideoRequestResult.model.toWeb()
+                    call.respondAsOkWithData(response)
+                } catch (t: Throwable) {
+                    val errorText = buildString {
+                        append("Get video by ID return ok, but something happen after.")
+                        appendLine()
+                        append("Filter: $requestFilter")
+                    }
+                    call.logErrorToFile(errorText, t)
+                    call.respondAsErrorByException(t)
+                }
                 return@get
             }
         }

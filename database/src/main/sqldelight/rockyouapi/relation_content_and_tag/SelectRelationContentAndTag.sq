@@ -1,0 +1,66 @@
+selectAll:
+SELECT
+    *
+FROM
+    RelationContentAndTag;
+
+
+
+selectContentTagIDList:
+SELECT
+    RelationContentAndTag.tagID AS id
+FROM
+    RelationContentAndTag
+WHERE
+    RelationContentAndTag.contentID = :contentID;
+
+
+
+selectContentTagList:
+SELECT
+    RelationContentAndTag.tagID,
+    RelationContentAndTag.isOneOfMainTag,
+    TagTranslation.translation AS translation
+FROM
+    RelationContentAndTag
+JOIN
+    TagTranslation
+    ON
+    TagTranslation.tagID = RelationContentAndTag.tagID
+WHERE
+    RelationContentAndTag.contentID = :contentID
+AND
+    TagTranslation.envID = :environmentID
+ORDER BY
+    RelationContentAndTag.tagID
+    DESC;
+
+
+
+selectContentTagListForContentList:
+SELECT
+    RelationContentAndTag.contentID AS contentID,
+    RelationContentAndTag.tagID AS tagID,
+    RelationContentAndTag.isOneOfMainTag AS isOneOfMainTag,
+    TagTranslation.translation AS translation
+FROM
+    RelationContentAndTag
+JOIN
+    TagTranslation
+    ON
+    TagTranslation.tagID = RelationContentAndTag.tagID
+WHERE
+    RelationContentAndTag.contentID IN :contentIDList
+AND
+    TagTranslation.envID = :environmentID
+ORDER BY
+    RelationContentAndTag.tagID
+    DESC;
+
+
+
+selectContentIDConnectedWithSomeTag:
+SELECT DISTINCT
+    RelationContentAndTag.contentID
+FROM
+    RelationContentAndTag;

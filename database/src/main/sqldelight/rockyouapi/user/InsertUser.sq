@@ -1,0 +1,5 @@
+insert:
+INSERT INTO
+    User(id, name, role)
+VALUES
+    (:id, :name, :role);

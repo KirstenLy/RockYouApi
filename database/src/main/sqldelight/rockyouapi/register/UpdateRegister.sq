@@ -1,0 +1,7 @@
+changeRatingOn:
+UPDATE
+    Content
+SET
+    rating = rating + :value
+WHERE
+    Content.id = :contentID;

@@ -1,5 +1,0 @@
-insert:
-INSERT INTO
-    Story(id, title, languageID, userID, scheme, rating)
-VALUES
-    (:id, :title, :languageID, :userID, :scheme, :rating);

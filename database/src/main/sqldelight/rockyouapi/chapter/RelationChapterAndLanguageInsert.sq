@@ -1,5 +1,0 @@
-insert:
-INSERT INTO
-    RelationChapterAndLanguage(id, chapterID, langID)
-VALUES
-    (:id, :chapterID, :langID);

@@ -1,0 +1,56 @@
+selectAllWithAuthor:
+SELECT
+    RelationContentAndAuthor.contentID AS contentID,
+    Author.id AS authorID,
+    Author.name AS authorName
+FROM
+    RelationContentAndAuthor
+JOIN
+    Author
+    ON
+    RelationContentAndAuthor.authorID = Author.id;
+
+
+
+selectAuthorListForContent:
+SELECT
+    Author.id AS authorID,
+    Author.name AS authorName
+FROM
+    RelationContentAndAuthor
+JOIN
+    Author
+    ON
+    RelationContentAndAuthor.authorID = Author.id
+WHERE
+    RelationContentAndAuthor.contentID = :contentID
+ORDER BY
+    Author.id
+    DESC;
+
+
+
+selectAuthorListForContentList:
+SELECT
+    RelationContentAndAuthor.contentID AS contentID,
+    Author.id AS authorID,
+    Author.name AS authorName
+FROM
+    RelationContentAndAuthor
+JOIN
+    Author
+    ON
+    RelationContentAndAuthor.authorID = Author.id
+WHERE
+    RelationContentAndAuthor.contentID IN :contentIDList
+ORDER BY
+    Author.id
+    DESC;
+
+
+
+selectContentIDConnectedWithSomeAuthors:
+SELECT DISTINCT
+    RelationContentAndAuthor.contentID
+FROM
+    RelationContentAndAuthor;

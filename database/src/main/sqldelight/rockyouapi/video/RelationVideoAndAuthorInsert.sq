@@ -1,5 +1,0 @@
-insert:
-INSERT INTO
-    RelationVideoAndAuthor(id, videoID, authorID)
-VALUES
-    (:id, :videoID, :authorID);

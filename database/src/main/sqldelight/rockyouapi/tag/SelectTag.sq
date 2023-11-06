@@ -1,0 +1,15 @@
+selectAllTags:
+SELECT
+    *
+FROM
+    Tag;
+
+
+
+selectAllTagTranslations:
+SELECT
+    TagTranslation.tagID AS tagID,
+    TagTranslation.envID AS envID,
+    TagTranslation.translation AS translation
+FROM
+    TagTranslation;

@@ -1,0 +1,79 @@
+selectOneIDByName:
+SELECT
+    User.id
+FROM
+    User
+WHERE
+    User.name = :name
+LIMIT
+    1;
+
+
+
+selectOneByName:
+SELECT
+    *
+FROM
+    User
+WHERE
+    User.name = :name
+LIMIT
+    1;
+
+
+
+isUserExistByID:
+SELECT EXISTS(
+    SELECT
+        1
+    FROM
+        User
+    WHERE
+        User.id = :id
+);
+
+
+
+isUserExistByName:
+SELECT EXISTS(
+    SELECT
+        1
+    FROM
+        User
+    WHERE
+        User.name = :name
+);
+
+
+
+selectOneByID:
+SELECT
+    *
+FROM
+    User
+WHERE
+    User.id = :userID
+LIMIT
+    1;
+
+
+
+selectLastInsertedUserID:
+SELECT
+    User.id
+FROM
+    User
+WHERE
+    User.id = LAST_INSERT_ID();
+
+
+
+selectRandomUser:
+SELECT
+    *
+FROM
+    User
+ORDER BY
+    RAND()
+LIMIT
+    1;

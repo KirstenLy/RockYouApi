@@ -1,0 +1,5 @@
+insert:
+INSERT INTO
+    RelationContentAndCharacter(contentID, characterID)
+VALUES
+    (:contentID, :characterID);

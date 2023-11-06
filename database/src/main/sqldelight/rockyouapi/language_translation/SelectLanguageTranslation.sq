@@ -1,0 +1,7 @@
+selectAllLanguageTranslations:
+SELECT
+    LanguageTranslation.envID AS envID,
+    LanguageTranslation.langID AS langID,
+    LanguageTranslation.translation AS translation
+FROM
+    LanguageTranslation;

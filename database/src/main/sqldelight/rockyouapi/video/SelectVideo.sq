@@ -1,0 +1,131 @@
+selectOneVideoBaseInfo:
+SELECT
+    Content.id AS id,
+    Content.title AS title,
+    Content.rating AS rating,
+    Video.url AS url,
+    User.id AS userID,
+    User.name AS userName,
+    User.role AS userRole,
+    Video.languageID AS baseLanguageID,
+    (SELECT COUNT(*) FROM Comment WHERE Comment.contentID = Content.id) AS commentsCount
+FROM
+    Content
+JOIN
+    Video ON Content.id = Video.id
+JOIN
+    User ON User.id = Video.userID
+WHERE
+    Content.id = :videoID;
+
+
+
+selectSeveralVideoBaseInfo:
+SELECT
+    Content.id AS id,
+    Content.title AS title,
+    Content.rating AS rating,
+    Video.url AS url,
+    Video.languageID AS baseLanguageID,
+    User.id AS userID,
+    User.name AS userName,
+    User.role AS userRole,
+    (SELECT COUNT(*) FROM Comment WHERE Comment.contentID = Content.id) AS commentsCount
+FROM
+    Content
+JOIN
+    Video ON Content.id = Video.id
+JOIN
+    User ON User.id = Video.userID
+WHERE
+        Content.contentType = 2
+    AND
+        (:searchWord IS NULL OR Content.title LIKE :searchWord)
+    AND
+        (:isLanguageListEmpty IS TRUE
+            OR
+            Video.languageID
+            IN
+            :languageIDList
+        )
+
+    AND
+        (:isUserListEmpty IS TRUE
+            OR
+            Video.userID
+            IN
+            :userIDList
+        )
+   AND
+        (:isIncludedTagListEmpty IS TRUE
+            OR
+            Content.id
+            IN (
+                SELECT
+                    RelationContentAndTag.contentID
+                FROM
+                    RelationContentAndTag
+                WHERE
+                    RelationContentAndTag.tagID IN :includedTagIDList)
+    )
+    AND
+        (:isExcludedTagListEmpty IS TRUE
+            OR
+            Content.id
+            NOT IN (
+                SELECT
+                    RelationContentAndTag.contentID
+                FROM
+                    RelationContentAndTag
+                WHERE
+                    RelationContentAndTag.tagID IN :excludedTagIDList)
+    )
+    AND
+        (:isAuthorListEmpty IS TRUE
+            OR
+            Content.id
+            IN (
+                SELECT
+                    RelationContentAndAuthor.contentID
+                FROM
+                    RelationContentAndAuthor
+                WHERE
+                    RelationContentAndAuthor.authorID IN :authorIDList)
+    )
+ORDER BY
+    Content.id DESC
+LIMIT
+    :limit
+OFFSET
+    :offset;
+
+
+
+selectVideoURL:
+SELECT
+    Video.url
+FROM
+    Video
+WHERE
+    Video.id = :videoID;
+
+
+
+selectVideoLanguageID:
+SELECT
+    Video.languageID
+FROM
+    Video
+WHERE
+    Video.id = :videoID;
+
+
+
+
+selectVideoUserID:
+SELECT
+    Video.userID
+FROM
+    Video
+WHERE
+    Video.id = :videoID;

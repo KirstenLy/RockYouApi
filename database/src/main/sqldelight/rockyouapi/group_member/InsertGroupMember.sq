@@ -1,0 +1,5 @@
+insert:
+INSERT INTO
+    ContentGroupMember(id, groupID, contentID, orderIDX)
+VALUES
+    (:id, :groupID, :contentID, :orderIDX);

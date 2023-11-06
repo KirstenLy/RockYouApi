@@ -1,0 +1,139 @@
+selectAllContentID:
+SELECT
+    Content.id
+FROM
+    Content;
+
+
+
+selectContentTypesForIDs:
+SELECT
+    Content.id,
+    Content.contentType
+FROM
+    Content
+WHERE
+    Content.id IN :contentIDList;
+
+
+selectRandomContentID:
+SELECT
+    Content.id
+FROM
+    Content
+ORDER BY
+    RAND()
+LIMIT
+    1;
+
+
+
+selectRandomContentIDForEntity:
+SELECT
+    Content.id
+FROM
+    Content
+WHERE
+    Content.contentType = :contentType
+ORDER BY
+    RAND()
+LIMIT
+    1;
+
+
+
+selectRandomContentIDListByArg:
+SELECT
+    Content.id
+FROM
+    Content
+ORDER BY
+    RAND()
+LIMIT
+    :limit;
+
+
+
+selectRandomContentIDList:
+SELECT
+    Content.id
+FROM
+    Content
+ORDER BY
+    RAND()
+LIMIT
+    10;
+
+
+
+selectRandomContentIDByContentType:
+SELECT
+    Content.id
+FROM
+    Content
+WHERE
+    Content.contentType = :contentType
+ORDER BY
+    RAND()
+LIMIT
+    1;
+
+
+
+selectRandomContentIDWhereContentTypeInList:
+SELECT
+    Content.id
+FROM
+    Content
+WHERE
+    Content.contentType IN :availableTypes
+ORDER BY
+    RAND()
+LIMIT
+    1;
+
+
+
+selectRandomContentIDListWhereContentTypeInList:
+SELECT
+    Content.id
+FROM
+    Content
+WHERE
+    Content.contentType IN :availableTypes
+ORDER BY
+    RAND()
+LIMIT
+    10;
+
+
+
+isContentExistByID:
+SELECT EXISTS(
+    SELECT
+        1
+    FROM
+        Content
+    WHERE
+        Content.id = :contentID
+);
+
+
+
+selectContentTitle:
+SELECT
+    Content.title
+FROM
+    Content
+WHERE
+    Content.id = :contentID;
+
+
+
+selectContentRating:
+SELECT
+    Content.rating
+FROM
+    Content
+WHERE
+    Content.id = :contentID;

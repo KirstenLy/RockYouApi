@@ -1,11 +1,14 @@
 package database.external.filter
 
-import database.internal.contract.Limitable
-
-/** @see database.external.DatabaseAPI.getVideos */
+/** @see database.external.contract.ProductionDatabaseAPI.getVideos */
 data class VideoListFilter(
-    val langID: Int? = null,
-    val environmentLangID: Byte? = null,
-    override val offset: Long?,
-    override val limit: Long
-) : Limitable
+    val limit: Long,
+    val offset: Long,
+    val environmentLangID: Int? = null,
+    val searchText: String? = null,
+    val languageIDList: List<Int> = emptyList(),
+    val authorIDList: List<Int> = emptyList(),
+    val includedTagIDList: List<Int> = emptyList(),
+    val excludedTagIDList: List<Int> = emptyList(),
+    val userIDList: List<Int> = emptyList()
+)

@@ -1,5 +1,0 @@
-insert:
-INSERT INTO
-    RelationVideoAndTag(id, videoID, tagID)
-VALUES
-    (:id, :videoID, :tagID);

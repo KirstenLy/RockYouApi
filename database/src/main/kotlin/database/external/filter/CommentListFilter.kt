@@ -1,10 +1,8 @@
 package database.external.filter
 
-import database.internal.contract.Limitable
-
-/** @see database.external.DatabaseAPI.getComments */
+/** @see database.external.contract.ProductionDatabaseAPI.getComments */
 data class CommentListFilter(
     val contentID: Int,
-    override val offset: Long?,
-    override val limit: Long
-) : Limitable
+    val offset: Long,
+    val limit: Long
+)

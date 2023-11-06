@@ -1,0 +1,5 @@
+insert:
+INSERT INTO
+    RelationContentAndTag(contentID, tagID)
+VALUES
+    (:contentID, :tagID);

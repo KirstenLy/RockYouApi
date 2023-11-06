@@ -1,0 +1,11 @@
+selectAllUploadsForUser:
+SELECT
+    Upload.fileName AS fileName,
+    Upload.isApproved AS isApproved,
+    Upload.isClosed AS isClosed,
+    Upload.message AS message,
+    Upload.creationDate AS creationDate
+FROM
+    Upload
+WHERE
+    Upload.userID = :userID;

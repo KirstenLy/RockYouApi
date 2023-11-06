@@ -1,0 +1,5 @@
+insert:
+INSERT INTO
+    Upload(userID, fileName)
+VALUES
+    (:userID, :fileName);

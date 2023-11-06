@@ -1,0 +1,5 @@
+insert:
+INSERT INTO
+    Video(id, url, languageID, userID)
+VALUES
+    (:id, :url, :languageID, :userID);

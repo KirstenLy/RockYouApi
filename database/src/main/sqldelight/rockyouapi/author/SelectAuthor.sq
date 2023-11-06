@@ -1,0 +1,7 @@
+selectAuthorName:
+SELECT
+    Author.name
+FROM
+    Author
+WHERE
+    Author.id = :authorID;

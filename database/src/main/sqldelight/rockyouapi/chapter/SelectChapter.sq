@@ -1,69 +1,74 @@
-selectBaseInfoList:
+selectOneChapterBaseInfo:
 SELECT
-    ContentRegister.id AS id,
-    Chapter.storyID AS parentStoryID,
-    Chapter.title AS title,
+    Content.id AS id,
+    Content.title AS title,
+    Content.rating AS rating,
+    Chapter.storyID AS storyID,
     Chapter.languageID AS baseLanguageID,
-    Chapter.rating AS rating,
+    Chapter.creationDate AS creationDate,
+    User.id AS userID,
+    User.name AS userName,
+    User.role AS userRole,
+    (SELECT COUNT(*) FROM Comment WHERE Comment.contentID = Content.id) AS commentsCount
+FROM
+    Content
+JOIN
+    Chapter ON Content.id = Chapter.id
+JOIN
+    User ON User.id = Chapter.userID
+WHERE
+    Content.id = :chapterID;
+
+
+
+selectAllChapterBaseInfo:
+SELECT
+    Content.id AS id,
+    Content.title AS title,
+    Content.rating AS rating,
+    Chapter.languageID AS baseLanguageID,
+    User.id AS userID,
+    User.name AS userName,
+    (SELECT COUNT(*) FROM Comment WHERE Comment.contentID = Content.id) AS commentsCount
+FROM
+    Content
+JOIN
+    Chapter ON Content.id = Chapter.id
+JOIN
+    User ON User.id = Chapter.userID;
+
+
+selectChapterBaseInfoList:
+SELECT
+    Content.id AS id,
+    Content.title AS title,
+    Content.rating AS rating,
+    Chapter.storyID AS storyID,
+    Chapter.languageID AS baseLanguageID,
     Chapter.text AS text,
     User.id AS userID,
     User.name AS userName,
-    (SELECT COUNT(*) FROM Comment WHERE Comment.contentID = ContentRegister.id) AS commentsCount
+    User.role AS userRole,
+    (SELECT COUNT(*) FROM Comment WHERE Comment.contentID = Content.id) AS commentsCount
 FROM
-    ContentRegister
+    Content
 JOIN
     Chapter
     ON
-    ContentRegister.id = Chapter.id
+    Content.id = Chapter.id
 JOIN
     User
     ON
     User.id = Chapter.userID
 WHERE
-    ContentRegister.id IN :chapterIDList;
+    Content.id IN :chapterIDList;
 
 
 
-selectChaptersAuthorList:
+selectChapterText:
 SELECT
-    RelationChapterAndAuthor.chapterID AS chapterID,
-    Author.id AS authorID,
-    Author.name AS authorName
+    Chapter.text
 FROM
-    RelationChapterAndAuthor
-JOIN
-    Author
-    ON
-    RelationChapterAndAuthor.authorID = Author.id
+    Chapter
 WHERE
-    RelationChapterAndAuthor.chapterID IN :chapterIDList
-ORDER BY
-    Author.id DESC;
-
-
-
-selectChaptersAvailableLanguageList:
-SELECT
-    RelationChapterAndLanguage.chapterID AS chapterID,
-    RelationChapterAndLanguage.langID AS abailableLanguageID
-FROM
-    RelationChapterAndLanguage
-WHERE
-    RelationChapterAndLanguage.chapterID IN :chapterIDList;
-
-
-
-selectPicturesTagList:
-SELECT
-    RelationChapterAndTag.chapterID AS chapterID,
-    RelationChapterAndTag.tagID AS tagID,
-    TagTranslation.envID AS tagLangID,
-    TagTranslation.translation AS tagTranslation
-FROM
-    RelationChapterAndTag
-JOIN
-    TagTranslation
-ON
-    TagTranslation.tagID = RelationChapterAndTag.tagID
-WHERE
-    RelationChapterAndTag.chapterID IN :chapterIDList AND TagTranslation.envID = :environmentLangID;
+    Chapter.id = :chapterID;

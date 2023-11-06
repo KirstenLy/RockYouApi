@@ -1,0 +1,16 @@
+selectRequestForUser:
+SELECT
+    Content.title AS contentTitle,
+    UpdateContentInfoRequest.requestText AS requestText,
+    UpdateContentInfoRequest.creationDate AS creationDate,
+    UpdateContentInfoRequest.isApproved AS isApproved,
+    UpdateContentInfoRequest.isClosed AS isClosed,
+    UpdateContentInfoRequest.resultText AS resultText
+FROM
+    UpdateContentInfoRequest
+JOIN
+    Content
+    ON
+    Content.id = UpdateContentInfoRequest.contentID
+WHERE
+    UpdateContentInfoRequest.userID = :userID;

@@ -1,0 +1,5 @@
+insert:
+INSERT INTO
+    Story(id, languageID, userID, scheme)
+VALUES
+    (:id, :languageID, :userID, :scheme);

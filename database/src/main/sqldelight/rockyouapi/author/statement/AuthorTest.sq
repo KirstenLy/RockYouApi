@@ -1,5 +1,0 @@
-insert:
-INSERT INTO
-    Author(id, name)
-VALUES
-    (?, ?);

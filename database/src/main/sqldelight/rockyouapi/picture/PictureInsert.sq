@@ -1,5 +1,0 @@
-insert:
-INSERT INTO
-    Picture(id, title, url, languageID, userID, rating)
-VALUES
-    (:id, :title, :url, :languageID, :userID, :rating);

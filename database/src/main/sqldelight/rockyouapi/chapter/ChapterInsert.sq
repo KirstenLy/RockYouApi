@@ -1,5 +1,0 @@
-insert:
-INSERT INTO
-    Chapter(id, storyID, title, languageID, userID, rating, text)
-VALUES
-    (:id, :storyID, :title, :languageID, :userID, :rating, :text);

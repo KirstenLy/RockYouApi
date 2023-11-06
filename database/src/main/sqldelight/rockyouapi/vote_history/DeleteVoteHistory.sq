@@ -1,0 +1,11 @@
+deleteByUserIDAndContentID:
+DELETE FROM
+    VoteHistory
+WHERE
+    VoteHistory.userID = :userID
+    AND
+    VoteHistory.contentID = :contentID;
+
+
+deleteAll:
+TRUNCATE TABLE VoteHistory;

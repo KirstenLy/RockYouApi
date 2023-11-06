@@ -1,13 +1,20 @@
 package database.external.result
 
-import declaration.entity.User
+import database.external.model.user.UserFull
+import database.external.model.user.UserRole
 
-/** @see database.external.DatabaseAPI.register */
+/** @see database.external.contract.ProductionDatabaseAPI.register */
 sealed interface RegisterUserResult {
 
-    class Ok(val user: User) : RegisterUserResult
+    /** User registered. */
+    class Ok(val userSimple: UserFull) : RegisterUserResult
 
+    /** User with same login already exists. */
     data object SameUserAlreadyExist : RegisterUserResult
 
-    class UnexpectedError(val t: Throwable) : RegisterUserResult
+    /** Attempt to create user with unknown role. Role list: [UserRole] */
+    data object UnknownUserRole : RegisterUserResult
+
+    /** Error. */
+    class Error(val t: Throwable) : RegisterUserResult
 }

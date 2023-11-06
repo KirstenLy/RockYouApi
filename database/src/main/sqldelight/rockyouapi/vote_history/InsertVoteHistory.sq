@@ -1,0 +1,5 @@
+insert:
+INSERT INTO
+    VoteHistory(id, userID, contentID, vote)
+VALUES
+    (:id, :userID, :contentID, :vote);

@@ -1,5 +1,11 @@
-removeByUserIDAndContentID:
+deleteByUserIDAndContentID:
 DELETE FROM
     Favorite
 WHERE
-    Favorite.userID = :userID AND Favorite.contentID = :contentID;
+    Favorite.userID = :userID
+    AND
+    Favorite.contentID = :contentID;
+
+
+deleteAll:
+TRUNCATE TABLE Favorite;

@@ -1,7 +1,0 @@
-checkIfAnyRecordsExist:
-SELECT
-    1
-FROM
-    RelationPictureAndLanguage
-WHERE
-    RelationPictureAndLanguage.pictureID = :contentID;

@@ -1,5 +1,0 @@
-insert:
-INSERT INTO
-    RelationPictureAndLanguage(id, pictureID, langID)
-VALUES
-    (:id, :pictureID, :langID);

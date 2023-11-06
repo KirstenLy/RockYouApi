@@ -1,3 +1,4 @@
+import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.PluginDependenciesSpecScope
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.kotlin.dsl.version
@@ -16,4 +17,8 @@ fun PluginDependenciesSpecScope.applyKotlinSerializationPlugin() {
 
 fun PluginDependenciesSpecScope.applyJIBPlugin() {
     id("com.google.cloud.tools.jib") version jibToolsPlugin
+}
+
+fun PluginDependenciesSpecScope.applySQLDelightlugin() {
+    id("app.cash.sqldelight") version sqlDelightPlugin
 }
